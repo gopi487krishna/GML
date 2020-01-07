@@ -8,11 +8,12 @@
 #include <functional>
 #include <map>
 
-
+// Forward Declaration
+class GDMLParser;
 
 class TBE_Profile
 {
-	using TBE_function=std::function<bool(std::string, std::string, std::string)>;
+	using TBE_function=std::function<bool(GDMLParser* parser,std::string, std::string, std::string)>;
 	
 	//*********************************************************
 	std::map<std::string, TBE_function> items;
@@ -33,7 +34,7 @@ public:
 	bool removeToken(std::string token_str);
 
 	TBE_function getTBE_func(std::string token_str);
-	bool exec_func(std::string tag, std::string& value, std::string& data);
+	bool exec_func(GDMLParser* parser,std::string tag, std::string& value, std::string& data);
 	//*********************************************************
 };
 
@@ -45,12 +46,12 @@ class GMLTokenCard
 	{
 		TBE_Profile* m_tokenprofile_id;
 		std::string m_token_name;
-		std::function<bool(std::string, std::string, std::string)> m_functionfortoken;
+		std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> m_functionfortoken;
 
 	public:
 		void setTokenName(const std::string& token_name) { m_token_name = token_name; }
 		void setTbeProfileAddress(TBE_Profile* tbe_profile) { m_tokenprofile_id = tbe_profile; }
-		void with(std::function<bool(std::string, std::string, std::string)> functionfortoken);
+		void with(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> functionfortoken);
 	};
 
 public:
@@ -58,7 +59,7 @@ public:
 	TokenFunction tie(const std::string& token_name);
 	void detachFunctionFrom(std::string& token_name);
 	auto getFunctionFrom(const std::string& token_name);
-	bool setFilter(std::function<bool(std::string, std::string, std::string)>filterfunction);
+	bool setFilter(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)>filterfunction);
 	void removeFilter();
 };
 

@@ -141,7 +141,7 @@ int GDMLParser::exec(const std::string& str,TBE_Profile profile)
 					return NO_TAGS_FOUND;
 				}
 
-				auto state=profile.exec_func(tag_value_pair.first, tag_value_pair.second, inner_text);
+				auto state=profile.exec_func(this,tag_value_pair.first, tag_value_pair.second, inner_text);
 				
 				
 			}
@@ -221,11 +221,11 @@ TBE_Profile::TBE_function TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool TBE_Profile::exec_func(std::string tag, std::string& value, std::string& data)
+bool TBE_Profile::exec_func(GDMLParser* parser,std::string tag, std::string& value, std::string& data)
 {
 	if (is_filter_present())
 	{
-	   	auto re_dispatch=tbe_filter(tag, value, data);
+	   	auto re_dispatch=tbe_filter(parser,tag, value, data);
 		if (re_dispatch)
 		{
 			auto func = getTBE_func(tag);
@@ -233,7 +233,7 @@ bool TBE_Profile::exec_func(std::string tag, std::string& value, std::string& da
 			{
 				return false;
 			}
-			func(tag, value, data);
+			func(parser,tag, value, data);
 			return true;
 		}
 		return true;
@@ -245,13 +245,13 @@ bool TBE_Profile::exec_func(std::string tag, std::string& value, std::string& da
 		{
 			return false;
 		}
-		func(tag, value, data);
+		func(parser,tag, value, data);
 		return true;
 	}
 	
 }
 
-void GMLTokenCard::TokenFunction::with(std::function<bool(std::string, std::string, std::string)> functionfortoken)
+void GMLTokenCard::TokenFunction::with(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> functionfortoken)
 {
 	m_functionfortoken = functionfortoken;
 	m_tokenprofile_id->registerforToken(m_token_name, m_functionfortoken);
@@ -278,7 +278,7 @@ auto GMLTokenCard::getFunctionFrom(const std::string& token_name)
 	return m_tokenprofile[token_name];
 }
 
-bool GMLTokenCard::setFilter(std::function<bool(std::string, std::string, std::string)> filterfunction)
+bool GMLTokenCard::setFilter(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> filterfunction)
 {
 	if (!filter_installed)
 	{
