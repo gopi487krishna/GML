@@ -3,13 +3,13 @@
 #include "error_codes.h"
 
 //GDML Parser
-const std::string& GDMLParser::trim(std::string& tag_text, char trimchar)
+const std::string& gml::GDMLParser::trim(std::string& tag_text, char trimchar)
 {
 	auto it = std::remove(tag_text.begin(), tag_text.end(), trimchar);
 	tag_text.erase(it, tag_text.end());
 	return tag_text;
 }
-std::vector<std::string> GDMLParser::splitIntoTokens(const std::string& tag_text, const char seperator)
+std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag_text, const char seperator)
 {
 
 	std::vector<std::string> tag_collection;
@@ -34,7 +34,7 @@ std::vector<std::string> GDMLParser::splitIntoTokens(const std::string& tag_text
 	}
 	return tag_collection;
 }
-std::pair<std::string, std::string> GDMLParser::splitIntoToken(const std::string& text, const char seperator)
+std::pair<std::string, std::string> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator)
 {
 	auto txtbeg = text.begin();
 	auto txtend = text.end();
@@ -58,7 +58,7 @@ std::pair<std::string, std::string> GDMLParser::splitIntoToken(const std::string
 		return std::make_pair(std::string(txtbeg, seperator_pos), std::string(seperator_pos + 1, txtend));
 	}
 }
-int GDMLParser::exec(const std::string& str,TBE_Profile profile)
+int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 {
 
 	auto strbeg = str.begin();
@@ -158,7 +158,7 @@ int GDMLParser::exec(const std::string& str,TBE_Profile profile)
 	}
 
 }
-bool GDMLParser::isClosed(const std::string& s1, const std::string& s2)
+bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 {
 
 	std::string ending_tag = s2;
@@ -174,7 +174,7 @@ bool GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 }
 
 
-const TBE_Profile::TBE_function TBE_Profile::operator[](std::string index)
+const gml::TBE_function gml::TBE_Profile::operator[](std::string index)
 {
 	try
 	{
@@ -190,7 +190,7 @@ const TBE_Profile::TBE_function TBE_Profile::operator[](std::string index)
 }
 
 //TBE_Profile
-bool TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_func)
+bool gml::TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_func)
 {
 	auto key_loc = items.find(token_str);
 	if (key_loc != items.end())
@@ -202,11 +202,11 @@ bool TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_func)
 		items[token_str] = tbe_func;
 	}
 }
-bool TBE_Profile::removeToken(std::string token_str)
+bool gml::TBE_Profile::removeToken(std::string token_str)
 {
 	return items.erase(token_str);
 }
-TBE_Profile::TBE_function TBE_Profile::getTBE_func(std::string token_str)
+gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 {
 	TBE_function func;
 	try
@@ -221,7 +221,7 @@ TBE_Profile::TBE_function TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool TBE_Profile::exec_func(GDMLParser* parser,std::string tag, std::string& value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser,std::string tag, std::string& value, std::string& data)
 {
 	if (is_filter_present())
 	{
@@ -251,14 +251,14 @@ bool TBE_Profile::exec_func(GDMLParser* parser,std::string tag, std::string& val
 	
 }
 
-void GMLTokenCard::TokenFunction::with(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> functionfortoken)
+void gml::GMLTokenCard::TokenFunction::with(TBE_function functionfortoken)
 {
 	m_functionfortoken = functionfortoken;
 	m_tokenprofile_id->registerforToken(m_token_name, m_functionfortoken);
 	
 }
 
-GMLTokenCard::TokenFunction GMLTokenCard::tie(const std::string& token_name)
+gml::GMLTokenCard::TokenFunction gml::GMLTokenCard::tie(const std::string& token_name)
 {
 	TokenFunction func;
 	func.setTokenName(token_name);
@@ -267,18 +267,18 @@ GMLTokenCard::TokenFunction GMLTokenCard::tie(const std::string& token_name)
 
 }
 
-void GMLTokenCard::detachFunctionFrom(std::string& token_name)
+void gml::GMLTokenCard::detachFunctionFrom(std::string& token_name)
 {
 	m_tokenprofile.removeToken(token_name);
 }
 
-auto GMLTokenCard::getFunctionFrom(const std::string& token_name)
+auto gml::GMLTokenCard::getFunctionFrom(const std::string& token_name)
 {
 	
 	return m_tokenprofile[token_name];
 }
 
-bool GMLTokenCard::setFilter(std::function<bool(GDMLParser* parser,std::string, std::string, std::string)> filterfunction)
+bool gml::GMLTokenCard::setFilter(TBE_function filterfunction)
 {
 	if (!filter_installed)
 	{
@@ -292,12 +292,12 @@ bool GMLTokenCard::setFilter(std::function<bool(GDMLParser* parser,std::string, 
 
 }
 
-void GMLTokenCard::removeFilter()
+void gml::GMLTokenCard::removeFilter()
 {
 	m_tokenprofile.removeFilter();
 }
 
- GMLTokenCard::operator TBE_Profile()
+ gml::GMLTokenCard::operator gml::TBE_Profile()
 {
 	return m_tokenprofile;
 }
