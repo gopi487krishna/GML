@@ -7,7 +7,7 @@
 #include <vector>
 #include <functional>
 #include <map>
-
+#include <optional>
 // Forward Declaration
 namespace gml {
 
@@ -112,7 +112,7 @@ namespace gml {
 		}
 		const std::string& trim(std::string& tag_text, char trimchar = ' ');
 		std::vector<std::string> splitIntoTokens(const std::string& tag_text, const char seperator = ' ');
-		std::pair<std::string, std::string>splitIntoToken(const std::string& text, const char seperator = ' ');
+		std::optional<std::pair<std::string, std::string>>splitIntoToken(const std::string& text, const char seperator = ' ');
 		//*********************************************************
 	};
 

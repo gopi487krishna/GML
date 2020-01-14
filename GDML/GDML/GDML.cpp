@@ -34,7 +34,7 @@ std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag
 	}
 	return tag_collection;
 }
-std::pair<std::string, std::string> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator)
+std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator)
 {
 	auto txtbeg = text.begin();
 	auto txtend = text.end();
@@ -42,11 +42,13 @@ std::pair<std::string, std::string> gml::GDMLParser::splitIntoToken(const std::s
 
 	if (seperator_pos == txtend)
 	{
-		return std::make_pair(std::string(), std::string());
+		return std::nullopt;
 	}
 	else if (seperator_pos == txtbeg)
 	{
-		return std::make_pair(std::string(), std::string(txtbeg + 1, txtend));
+		/*return std::make_pair(std::string(), std::string(txtbeg + 1, txtend));*/
+		// Consider revisiting the case for above statement
+		return std::nullopt;
 	}
 	else if (seperator_pos == txtend - 1)
 	{
@@ -86,6 +88,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			return BRACE_MISMATCH_ERROR;
 		}
 
+		//Here we obtain the tag information inside the [] brackets
 		std::string OTAG_attribtext(OTAG_openbrace + 1, OTAG_closebrace);
 
 		//--------------------------------------------------------------------------------------------------------------------------
@@ -117,7 +120,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 		trim(CTAG_attribtext);
 		//***********************
 
-		//Check whether the tags are in the proper format and dispatch them out to rendering engine
+		//Check whether the tags are properly closed and then dispatch them
 		if (isClosed(CTAG_attribtext) || isClosed(OTAG_attribtext, CTAG_attribtext))
 		{
 
@@ -135,13 +138,13 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			{
 				auto tag_value_pair = splitIntoToken(tag, syntax_profile.getTagValueSeperator());
 							
-				if (tag_value_pair.first.empty())
+				if (tag_value_pair)
 				{
 
 					return NO_TAGS_FOUND;
 				}
 
-				auto state=profile.exec_func(this,tag_value_pair.first, tag_value_pair.second, inner_text);
+				auto state=profile.exec_func(this,tag_value_pair->first, tag_value_pair->second, inner_text);
 				
 				
 			}
@@ -170,7 +173,7 @@ bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 
 	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator());
 
-	return std::equal(split_tag_value.first.begin(), split_tag_value.first.end(), ending_tag.begin(), ending_tag.end());
+	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), ending_tag.begin(), ending_tag.end());
 }
 
 
@@ -221,34 +224,20 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser,std::string tag, std::string& value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string tag, std::string& value, std::string& data)
 {
+	// If there is some token_filter then execute it
 	if (is_filter_present())
 	{
-	   	auto re_dispatch=tbe_filter(parser,tag, value, data);
-		if (re_dispatch)
-		{
-			auto func = getTBE_func(tag);
-			if (func == nullptr)
-			{
-				return false;
-			}
-			func(parser,tag, value, data);
+		// Check if should redispatch it to their respective functions
+		auto should_redispatch = tbe_filter(parser, tag, value, data);
+		if (!should_redispatch){
 			return true;
 		}
-		return true;
 	}
-	else
-	{
-		auto func = getTBE_func(tag);
-		if (func == nullptr)
-		{
-			return false;
-		}
-		func(parser,tag, value, data);
-		return true;
-	}
-	
+	// Get the tag function
+	auto func = getTBE_func(tag);
+	func != nullptr ? (func(parser, tag, value, data), true) : false;	
 }
 
 void gml::GMLTokenCard::TokenFunction::with(TBE_function functionfortoken)
