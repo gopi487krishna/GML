@@ -138,7 +138,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			{
 				auto tag_value_pair = splitIntoToken(tag, syntax_profile.getTagValueSeperator());
 							
-				if (tag_value_pair)
+				if (!tag_value_pair)
 				{
 
 					return NO_TAGS_FOUND;
@@ -164,16 +164,12 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 {
 
-	std::string ending_tag = s2;
-	if (*ending_tag.begin() != '/')
-	{
+
+	if (*s2.begin() != '/'){
 		return false;
 	}
-	ending_tag.erase(ending_tag.begin());
-
 	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator());
-
-	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), ending_tag.begin(), ending_tag.end());
+	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), s2.begin()+1, s2.end());
 }
 
 
