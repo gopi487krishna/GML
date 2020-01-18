@@ -21,9 +21,9 @@ matrix:
     - os: osx
       env: COMPILER=clang++
       packages:
-        - clang-8
-        - libc++-8-dev
-        - libc++abi-8-dev
+        - clang-9
+        - libc++-9-dev
+        - libc++abi-9-dev
 
 script:
   - mkdir build
