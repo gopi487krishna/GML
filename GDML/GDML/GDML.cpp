@@ -232,7 +232,7 @@ bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::stri
 			return true;
 		}
 	}
-	// Get the tag function
+	// Get the tag function,
 	auto func = getTBE_func(tag);
 	if (func != nullptr)
 	{

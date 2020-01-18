@@ -16,4 +16,7 @@ ipch/
 *.vspx
 *.sap
 
+#Visual Studio User Based
+.vs/
+
 #...
