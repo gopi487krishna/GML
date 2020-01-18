@@ -234,7 +234,14 @@ bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::stri
 	}
 	// Get the tag function
 	auto func = getTBE_func(tag);
-	func != nullptr ? (func(parser, tag, value, data), true) : false;	
+	if (func != nullptr)
+	{
+		func(parser, tag, value, data);
+		return true;
+	}
+	return false;
+
+	
 }
 
 void gml::GMLTokenCard::TokenFunction::with(TBE_function functionfortoken)
