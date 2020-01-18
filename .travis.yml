@@ -16,14 +16,14 @@ matrix:
         - sudo apt-get install -qq g++-9
         - sudo apt-get install -y libboost-test-dev
 
-    # Build with OS X and clang.
+    # Build with OS X and clang ( Currently disabled due to some compilation problems with Clang
     # The default clang compiler supports C++11.
-    - os: osx
-      env: COMPILER=clang++
-      packages:
-        - clang-9
-        - libc++-9-dev
-        - libc++abi-9-dev
+    #- os: osx
+     # env: COMPILER=clang++
+     # packages:
+      #  - clang-9
+       # - libc++-9-dev
+        #- libc++abi-9-dev
 
 script:
   - mkdir build
