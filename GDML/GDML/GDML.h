@@ -36,7 +36,7 @@ namespace gml {
 		bool removeToken(std::string token_str);
 
 		TBE_function getTBE_func(std::string token_str);
-		bool exec_func(GDMLParser* parser, std::string tag, std::string& value, std::string& data);
+		bool exec_func(GDMLParser* parser, std::string& tag, std::string& value, std::string& data);
 		//*********************************************************
 	};
 

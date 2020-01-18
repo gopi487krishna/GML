@@ -199,6 +199,7 @@ bool gml::TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_
 	else
 	{
 		items[token_str] = tbe_func;
+		return true;
 	}
 }
 bool gml::TBE_Profile::removeToken(std::string token_str)
@@ -211,7 +212,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	try
 	{
 		func = items.at(token_str);
-
+		
 	}
 	catch (...)
 	{
@@ -220,7 +221,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string tag, std::string& value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::string& value, std::string& data)
 {
 	// If there is some token_filter then execute it
 	if (is_filter_present())
