@@ -14,7 +14,7 @@ include_directories(${BOOST_INCLUDE_DIR})
 
 #Add Compiler Flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions(-std=c++17 -stdlib=libc++ -O3 -Wall)
+    add_definitions(-std=c++1z -stdlib=libc++ -O3 -Wall)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_definitions(-std=c++17 -O3 -Wall)
 endif()
