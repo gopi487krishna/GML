@@ -8,11 +8,12 @@
 #include <functional>
 #include <map>
 #include <optional>
+#include <variant>
 // Forward Declaration
 namespace gml {
 
 	class GDMLParser;
-	using TBE_function = std::function<bool(GDMLParser * parser, std::string, std::string, std::string)>;
+	using TBE_function = std::function<bool(GDMLParser * parser, std::string, std::variant<std::string,std::map<std::string,std::string>>, std::string)>;
 
 	class TBE_Profile
 	{
@@ -36,7 +37,7 @@ namespace gml {
 		bool removeToken(std::string token_str);
 
 		TBE_function getTBE_func(std::string token_str);
-		bool exec_func(GDMLParser* parser, std::string& tag, std::string& value, std::string& data);
+		bool exec_func(GDMLParser* parser, std::string& tag, std::variant<std::string,std::map<std::string,std::string>>& value, std::string& data);
 		//*********************************************************
 	};
 
@@ -67,7 +68,7 @@ namespace gml {
 
 	class GDML_SYMBOL_PROFILE
 	{
-		char tag_seperator{ ',' };
+		char tag_seperator{ ';' };
 		char tag_value_seperator{ ':' };
 		char tag_open{ '[' };
 		char tag_close{ ']' };
@@ -113,6 +114,7 @@ namespace gml {
 		const std::string& trim(std::string& tag_text, char trimchar = ' ');
 		std::vector<std::string> splitIntoTokens(const std::string& tag_text, const char seperator = ' ');
 		std::optional<std::pair<std::string, std::string>>splitIntoToken(const std::string& text, const char seperator = ' ');
+		std::optional<std::pair<std::string, std::variant<std::string, std::map<std::string, std::string>>>> processSplitToken(const std::string& text, const char seperator);
 		//*********************************************************
 	};
 
