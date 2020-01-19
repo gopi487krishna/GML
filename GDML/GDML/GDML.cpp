@@ -161,6 +161,8 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 	}
 
 }
+
+// isClosed :
 bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 {
 
