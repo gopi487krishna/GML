@@ -37,44 +37,46 @@ std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag
 }
 
 
-std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text, const char seperator)
+std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
-	auto result = splitIntoToken(text, seperator);
-	if (!result)
+	auto tag_value_pair = splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
+	if (!tag_value_pair.has_value())
 	{
 		return std::nullopt;
 	}
 
-	if (*result->second.begin() == '{')
+	if (*tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen())	
 	{
 
-			auto ending_position = std::find(result->second.begin(), result->second.end(), '}');
-			if (ending_position == result->second.end() || ending_position!= result->second.end()-1)
+			auto attribute_list_close_pos = std::find(tag_value_pair->second.begin(), tag_value_pair->second.end(),syntax_profile.getAttributeListClose());
+			
+			//Covers the case if along with attribute list some other text was also specified like [print:{color:blue} This is not allowed] Hello [/]
+			if (attribute_list_close_pos == tag_value_pair->second.end() || attribute_list_close_pos!= tag_value_pair->second.end()-1)
 			{
 				return std::nullopt;
 
 			}
 			
-			std::string parse_string(result->second.begin()+1, ending_position);
-			auto z_result = splitIntoTokens(parse_string, ',');
+			std::string parse_string(tag_value_pair->second.begin()+1, attribute_list_close_pos);
+			auto attributelist = splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
 			std::map<std::string, std::string> my_map;
-			for (auto& tag : z_result){
+			for (auto& tag : attributelist){
 					
-				auto x = splitIntoToken(tag);
+				auto x = splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
 				my_map[x->first] = x->second;
 					
 
 			}
 
-			return std::make_pair(result->first, std::move(my_map));		
+			return std::make_pair(tag_value_pair->first, std::move(my_map));		
 	}
 	else{
-			return std::make_pair(result->first, result->second);
+			return std::make_pair(tag_value_pair->first, tag_value_pair->second);
 		}
 }
 
 
-std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator)
+std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator, const std::vector<char>forbidden_list )
 {
 
 	auto textbeg = text.begin();
@@ -83,19 +85,20 @@ std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoTok
 	//default position
 	auto seperator_pos = textend;
 
-	//Linear Loop
+	
 	for (auto iterator = textbeg; iterator != textend; iterator++)
 	{
 
 		if (!isalpha(*iterator))
 		{
-			if (*iterator == ':' && seperator_pos == textend)
+			if (*iterator == seperator && seperator_pos == textend)
 			{
 				seperator_pos = iterator;
 
 			}
-			// TODO:  Spaces or any kind of character is not entertained !!
-			else if ((*iterator == '{' || *iterator == '}') && seperator_pos == textend)
+			// For any other kind of character this function should not work
+
+			else if((std::find(forbidden_list.begin(), forbidden_list.end(),*iterator)!=forbidden_list.end())&& seperator_pos==textend)
 			{
 				return std::nullopt;
 			}
@@ -124,32 +127,6 @@ std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoTok
 		return std::make_pair(std::string(textbeg, seperator_pos), std::string(seperator_pos + 1, textend));
 	}
 
-
-
-// This code has to get removed but requires some more tests
-	//auto txtbeg = text.begin();
-	//auto txtend = text.end();
-	//auto seperator_pos = std::find(txtbeg, txtend, seperator);
-
-	//if (seperator_pos == txtend)
-	//{
-	//	return std::nullopt;
-	//}
-	//else if (seperator_pos == txtbeg)
-	//{
-	//	/*return std::make_pair(std::string(), std::string(txtbeg + 1, txtend));*/
-	//	// Consider revisiting the case for above statement
-	//	return std::nullopt;
-	//}
-	//else if (seperator_pos == txtend - 1)
-	//{
-	//	return std::make_pair(std::string(txtbeg, txtend - 1), std::string());
-
-	//}
-	//else
-	//{
-	//	return std::make_pair(std::string(txtbeg, seperator_pos), std::string(seperator_pos + 1, txtend));
-	//}
 }
 
 
@@ -229,7 +206,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			//This loop basically recurses through all the tags that enclose the inner text
 			for (auto& tag : tags)
 			{
-				auto tag_value_pair = processSplitToken(tag, syntax_profile.getTagValueSeperator());
+				auto tag_value_pair = processSplitToken(tag);
 							
 				if (!tag_value_pair)
 				{
@@ -263,7 +240,7 @@ bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 	if (*s2.begin() != '/'){
 		return false;
 	}
-	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator());
+	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator(), {});
 	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), s2.begin()+1, s2.end());
 }
 
