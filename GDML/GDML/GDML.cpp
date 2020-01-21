@@ -3,43 +3,10 @@
 #include "error_codes.h"
 
 //GDML Parser
-const std::string& gml::GDMLParser::trim(std::string& tag_text, char trimchar)
-{
-	auto it = std::remove(tag_text.begin(), tag_text.end(), trimchar);
-	tag_text.erase(it, tag_text.end());
-	return tag_text;
-}
-std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag_text, const char seperator)
-{
-
-	std::vector<std::string> tag_collection;
-	std::string tag;
-	if (tag_text.empty())
-	{
-		return tag_collection;
-
- 	}
-	for (auto character : tag_text)
-	{
-
-		if (character == seperator)
-		{
-			tag_collection.push_back(tag); tag.clear(); continue;
-		}
-		tag += character;
-
-	}
-	if (!tag.empty())
-	{
-		tag_collection.push_back(tag);
-	}
-	return tag_collection;
-}
-
 
 std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
-	auto tag_value_pair = splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
+	auto tag_value_pair = gml::ParsingApi::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
 	if (!tag_value_pair.has_value())
 	{
 		return std::nullopt;
@@ -58,11 +25,11 @@ std::optional<std::pair<std::string,std::variant<std::string,std::map<std::strin
 			}
 			
 			std::string parse_string(tag_value_pair->second.begin()+1, attribute_list_close_pos);
-			auto attributelist = splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
+			auto attributelist = gml::ParsingApi::splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
 			std::map<std::string, std::string> my_map;
 			for (auto& tag : attributelist){
 					
-				auto x = splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
+				auto x = gml::ParsingApi::splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
 				my_map[x->first] = x->second;
 					
 
@@ -76,58 +43,6 @@ std::optional<std::pair<std::string,std::variant<std::string,std::map<std::strin
 }
 
 
-std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator, const std::vector<char>forbidden_list )
-{
-
-	auto textbeg = text.begin();
-	auto textend = text.end();
-
-	//default position
-	auto seperator_pos = textend;
-
-	
-	for (auto iterator = textbeg; iterator != textend; iterator++)
-	{
-
-		if (!isalpha(*iterator))
-		{
-			if (*iterator == seperator && seperator_pos == textend)
-			{
-				seperator_pos = iterator;
-
-			}
-			// For any other kind of character this function should not work
-
-			else if((std::find(forbidden_list.begin(), forbidden_list.end(),*iterator)!=forbidden_list.end())&& seperator_pos==textend)
-			{
-				return std::nullopt;
-			}
-
-
-
-		}
-	}
-	
-
-	if (seperator_pos == textend)
-	{
-		return std::nullopt;
-	}
-	else if (seperator_pos == textbeg)
-	{
-		return std::nullopt;
-	}
-	else if (seperator_pos == textend - 1)
-	{
-
-		return std::make_pair(std::string(textbeg, textend - 1), std::string());
-	}
-	else
-	{
-		return std::make_pair(std::string(textbeg, seperator_pos), std::string(seperator_pos + 1, textend));
-	}
-
-}
 
 
 int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
@@ -186,17 +101,17 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 		std::string CTAG_attribtext(CTAG_openbrace + 1, CTAG_closebrace);
 
 		//***********************
-		trim(OTAG_attribtext);
-		trim(CTAG_attribtext);
+		gml::ParsingApi::trim(OTAG_attribtext);
+		gml::ParsingApi::trim(CTAG_attribtext);
 		//***********************
 
 		//Check whether the tags are properly closed and then dispatch them
-		if (isClosed(CTAG_attribtext) || isClosed(OTAG_attribtext, CTAG_attribtext))
+		if (gml::ParsingApi::isClosed(CTAG_attribtext,syntax_profile.getClosingCharacter()) || gml::ParsingApi::isClosed(OTAG_attribtext, CTAG_attribtext,syntax_profile.getClosingCharacter(),syntax_profile.getTagValueSeperator()))
 		{
 
 			
 			std::string inner_text(OTAG_closebrace + 1 , CTAG_openbrace );
-			auto tags = splitIntoTokens(OTAG_attribtext, syntax_profile.getTagSeperator());
+			auto tags = gml::ParsingApi::splitIntoTokens(OTAG_attribtext, syntax_profile.getTagSeperator());
 			if (tags.empty())
 			{
 				return NO_TAGS_FOUND;
@@ -232,17 +147,6 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 
 }
 
-
-bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
-{
-
-
-	if (*s2.begin() != '/'){
-		return false;
-	}
-	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator(), {});
-	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), s2.begin()+1, s2.end());
-}
 
 
 const gml::TBE_function gml::TBE_Profile::operator[](std::string index)

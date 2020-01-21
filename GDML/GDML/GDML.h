@@ -1,14 +1,12 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <vector>
-#include <functional>
+
 #include <map>
-#include <optional>
+#include <functional>
+#include "GMLParser.h"
 #include <variant>
+#include "gml_symbol_profile.h"
+
+
 // Forward Declaration
 namespace gml {
 
@@ -66,51 +64,7 @@ namespace gml {
 		void removeFilter();
 	};
 
-	class GDML_SYMBOL_PROFILE
-	{
-		char tag_seperator{ ';' };
-		char tag_value_seperator{ ':' };
-		char tag_open{ '[' };
-		char tag_close{ ']' };
-		char attribute_open{'{'};
-		char attribute_seperator{ ',' };
-		char attribute_close{'}'};
 
-	public:
-		GDML_SYMBOL_PROFILE() {}
-		GDML_SYMBOL_PROFILE(const  char _tag_seperator, const  char _tag_value_seperator, const  char _tag_open, const  char _tag_close)
-			:tag_seperator(_tag_seperator), tag_value_seperator(_tag_value_seperator), tag_open(_tag_open), tag_close(_tag_close) {}
-		
-		//----------------------------------------
-		void setAttributeSeperator(char _attribute_seperator) { attribute_seperator = _attribute_seperator; }
-		char getAttributeSeperator() { return attribute_seperator; }
-		//----------------------------------------
-
-		//----------------------------------------
-		void setAttributelistOpen(char open_attribute) { attribute_open = open_attribute; }
-		char getAttributeListOpen() { return attribute_open; }
-		//----------------------------------------
-
-		//----------------------------------------
-		void setAttributeListClose(char close_attribute) { attribute_close = close_attribute; }
-		char getAttributeListClose() { return attribute_close; }
-		//----------------------------------------
-
-		//----------------------------------------
-		void setTagSeperator(char _tag_seperator) { tag_seperator = _tag_seperator; }
-		char getTagSeperator() { return tag_seperator; }
-		//----------------------------------------
-		void setTagValueSeperator(char _tag_value_seperator) { tag_value_seperator = _tag_value_seperator; }
-		char getTagValueSeperator() { return tag_value_seperator; }
-		//----------------------------------------
-		void setOpenTag(char opentag_character) { tag_open = opentag_character; }
-		char getOpenTag() { return tag_open; }
-		//----------------------------------------
-		void setCloseTag(char closetag_character) { tag_close = closetag_character; }
-		char getCloseTag() { return tag_close; }
-		//----------------------------------------
-
-	};
 
 	class GDMLParser
 	{
@@ -125,14 +79,6 @@ namespace gml {
 
 	private:
 
-		bool isClosed(const std::string& s1, const std::string& s2);
-		bool isClosed(std::string& str)
-		{
-			return str == "/";
-		}
-		const std::string& trim(std::string& tag_text, char trimchar = ' ');
-		std::vector<std::string> splitIntoTokens(const std::string& tag_text, const char seperator = ' ');
-		std::optional<std::pair<std::string, std::string>>splitIntoToken(const std::string& text, const char seperator , std::vector<char> forbidden_list);
 		std::optional<std::pair<std::string, std::variant<std::string, std::map<std::string, std::string>>>> processSplitToken(const std::string& text);
 		//*********************************************************
 	};
