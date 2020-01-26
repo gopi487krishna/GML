@@ -9,7 +9,17 @@
 #include <optional>
 
 
-// Forward Declaration
+/**
+ * @file GDML.h
+ * @author Gopi Krishna Menon
+ * @details Contains all the declarations of GML Classes
+*/
+
+
+/**
+ * @brief This namespace contains all the declaration of GML Classes.
+ * @author Gopi Krishna Menon
+*/
 namespace gml {
 
 	class GDMLParser;
@@ -83,7 +93,7 @@ namespace gml {
 	 * @brief Defines all the set of Symbols that control the Program Form and Style of GML code
 	 * @author Gopi Krishna Menon
 	 * @details
-	 * This class contains a set of methods for manipulating the default Program Form and Style of <strong>GML<strong> code.
+	 * This class contains a set of methods for manipulating the default Program Form and Style of <strong>GML</strong> code.
 	 * The object of this code with new set of symbols should be passed as an argument to the Parser. The parser parses the code
 	 * stricly on the symbols defined.
 	 * @note The symbols/characters accepted should be purely ASCII in nature.
