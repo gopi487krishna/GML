@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(GML_Project)
 
 #To add source code and setup folder structure
-set(src GDML/GDML/GDML.cpp)
+set(src GDML/GDML/GDML.cpp GDML/GDML/GMLParser.cpp GDML/GDML/gdml_symbol_profile.cpp)
 set(test Test/test.cpp)
 set(include GDML/GDML/)
 include_directories(include)
