@@ -27,12 +27,6 @@
     <ClInclude Include="error_codes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GMLParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gml_symbol_profile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GDML.cpp">

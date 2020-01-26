@@ -156,8 +156,6 @@
     <ClInclude Include="error_codes.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GDML.h" />
-    <ClInclude Include="GMLParser.h" />
-    <ClInclude Include="gml_symbol_profile.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

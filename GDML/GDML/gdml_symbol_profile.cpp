@@ -1,10 +1,22 @@
 #include "pch.h"
-#include "gml_symbol_profile.h"
+#include "GDML.h"
 
 gml::GDML_SYMBOL_PROFILE::GDML_SYMBOL_PROFILE() {}
 
-gml::GDML_SYMBOL_PROFILE::GDML_SYMBOL_PROFILE(const  char _tag_seperator, const  char _tag_value_seperator, const  char _tag_open, const  char _tag_close)
-	:tag_seperator(_tag_seperator), tag_value_seperator(_tag_value_seperator), tag_open(_tag_open), tag_close(_tag_close) {}
+gml::GDML_SYMBOL_PROFILE::GDML_SYMBOL_PROFILE(
+	const  char _tag_seperator,
+	const  char _tag_value_seperator,
+	const  char _tag_open,
+	const  char _tag_close,
+	const  char _closing_character,
+	const  char _attribute_open,
+	const  char _attribute_seperator,
+	const  char _attribute_close
+
+) : tag_seperator(_tag_seperator), tag_value_seperator(_tag_value_seperator), tag_open(_tag_open), tag_close(_tag_close),
+closing_character(_closing_character), attribute_open(_attribute_open), attribute_seperator(_attribute_seperator), attribute_close(_attribute_close)
+{}
+
 
 
 //----------------------------------------

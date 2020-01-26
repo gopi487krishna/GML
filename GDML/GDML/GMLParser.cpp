@@ -1,6 +1,6 @@
 
 #include "pch.h"
-#include "GMLParser.h"
+#include "GDML.h"
 
 const std::string& gml::ParsingApi::trim(std::string& tag_text, char trimchar)
 {
