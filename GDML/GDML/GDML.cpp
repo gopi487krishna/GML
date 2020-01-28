@@ -21,6 +21,7 @@ std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag
  	}
 	for (auto character : tag_text)
 	{
+
 		if (character == seperator)
 		{
 			tag_collection.push_back(tag); tag.clear(); continue;
@@ -34,32 +35,101 @@ std::vector<std::string> gml::GDMLParser::splitIntoTokens(const std::string& tag
 	}
 	return tag_collection;
 }
-std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator)
+
+
+std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
-	auto txtbeg = text.begin();
-	auto txtend = text.end();
-	auto seperator_pos = std::find(txtbeg, txtend, seperator);
-
-	if (seperator_pos == txtend)
+	auto tag_value_pair = splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
+	if (!tag_value_pair.has_value())
 	{
 		return std::nullopt;
 	}
-	else if (seperator_pos == txtbeg)
+
+	if (*tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen())	
 	{
-		/*return std::make_pair(std::string(), std::string(txtbeg + 1, txtend));*/
-		// Consider revisiting the case for above statement
+
+			auto attribute_list_close_pos = std::find(tag_value_pair->second.begin(), tag_value_pair->second.end(),syntax_profile.getAttributeListClose());
+			
+			//Covers the case if along with attribute list some other text was also specified like [print:{color:blue} This is not allowed] Hello [/]
+			if (attribute_list_close_pos == tag_value_pair->second.end() || attribute_list_close_pos!= tag_value_pair->second.end()-1)
+			{
+				return std::nullopt;
+
+			}
+			
+			std::string parse_string(tag_value_pair->second.begin()+1, attribute_list_close_pos);
+			auto attributelist = splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
+			std::map<std::string, std::string> my_map;
+			for (auto& tag : attributelist){
+					
+				auto x = splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
+				my_map[x->first] = x->second;
+					
+
+			}
+
+			return std::make_pair(tag_value_pair->first, std::move(my_map));		
+	}
+	else{
+			return std::make_pair(tag_value_pair->first, tag_value_pair->second);
+		}
+}
+
+
+std::optional<std::pair<std::string, std::string>> gml::GDMLParser::splitIntoToken(const std::string& text, const char seperator, const std::vector<char>forbidden_list )
+{
+
+	auto textbeg = text.begin();
+	auto textend = text.end();
+
+	//default position
+	auto seperator_pos = textend;
+
+	
+	for (auto iterator = textbeg; iterator != textend; iterator++)
+	{
+
+		if (!isalpha(*iterator))
+		{
+			if (*iterator == seperator && seperator_pos == textend)
+			{
+				seperator_pos = iterator;
+
+			}
+			// For any other kind of character this function should not work
+
+			else if((std::find(forbidden_list.begin(), forbidden_list.end(),*iterator)!=forbidden_list.end())&& seperator_pos==textend)
+			{
+				return std::nullopt;
+			}
+
+
+
+		}
+	}
+	
+
+	if (seperator_pos == textend)
+	{
 		return std::nullopt;
 	}
-	else if (seperator_pos == txtend - 1)
+	else if (seperator_pos == textbeg)
 	{
-		return std::make_pair(std::string(txtbeg, txtend - 1), std::string());
+		return std::nullopt;
+	}
+	else if (seperator_pos == textend - 1)
+	{
 
+		return std::make_pair(std::string(textbeg, textend - 1), std::string());
 	}
 	else
 	{
-		return std::make_pair(std::string(txtbeg, seperator_pos), std::string(seperator_pos + 1, txtend));
+		return std::make_pair(std::string(textbeg, seperator_pos), std::string(seperator_pos + 1, textend));
 	}
+
 }
+
+
 int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 {
 
@@ -136,7 +206,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			//This loop basically recurses through all the tags that enclose the inner text
 			for (auto& tag : tags)
 			{
-				auto tag_value_pair = splitIntoToken(tag, syntax_profile.getTagValueSeperator());
+				auto tag_value_pair = processSplitToken(tag);
 							
 				if (!tag_value_pair)
 				{
@@ -161,6 +231,8 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 	}
 
 }
+
+
 bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 {
 
@@ -168,7 +240,7 @@ bool gml::GDMLParser::isClosed(const std::string& s1, const std::string& s2)
 	if (*s2.begin() != '/'){
 		return false;
 	}
-	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator());
+	auto split_tag_value = splitIntoToken(s1, syntax_profile.getTagValueSeperator(), {});
 	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), s2.begin()+1, s2.end());
 }
 
@@ -221,7 +293,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::string& value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::variant<std::string,std::map<std::string,std::string>>&value, std::string& data)
 {
 	// If there is some token_filter then execute it
 	if (is_filter_present())
