@@ -59,7 +59,7 @@ namespace gml {
 		/// @details	Splits a given token into <strong>name:value</strong> pairs based on the seperator
 		/// @param		text			 text that needs to be split into name value pair
 		/// @param		seperator		 character used for seperating the text into name:value pairs
-		/// @param		forbiddden_list  A collection of characters that must not appear before the seperator
+		/// @param		forbidden_list  A collection of characters that must not appear before the seperator
 		/// @return     optional< pair<string,string> >
 		/// @note		As you can see this function is tightly integrated to Interpreter's context ( not physically but conceptually ) The forbidden list is used to 
 		///				make sure that certain blacklisted characters/symbols do not appear before seperator ( so that the interpreter does not parse the code incorrectly )
