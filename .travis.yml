@@ -9,7 +9,6 @@ matrix:
         apt:
           packages:
             - libstdc++-9-dev
-            - python3.6
           sources:
             - ubuntu-toolchain-r-test
             - deadsnakes
@@ -28,7 +27,7 @@ matrix:
         #- libc++abi-9-dev
 
 script:
-  - printenv
+  - sudo apt-get install python3.6
   - python3 --version
   - sudo apt install python3-pip
   - pip3 install jinja2 Pygments
