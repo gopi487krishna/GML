@@ -28,6 +28,7 @@ matrix:
 
 script:
   - sudo apt-get install python3.6
+  - sudo update-alternatives  --set python /usr/bin/python3.6
   - python3 --version
   - sudo apt install python3-pip
   - pip3 install jinja2 Pygments
