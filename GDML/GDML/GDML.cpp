@@ -149,11 +149,11 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 
 
 
-const gml::TBE_function gml::TBE_Profile::operator[](std::string index)
+const gml::TBE_function gml::TBE_Profile::operator[](std::string tag_name)
 {
 	try
 	{
-		TBE_function val = items.at(index);
+		TBE_function val = items.at(tag_name);
 		return val;
 	}
 	catch (...)
