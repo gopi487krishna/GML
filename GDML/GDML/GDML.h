@@ -221,67 +221,65 @@ namespace gml {
 	class TBE_Profile
 	{
 
-		//*********************************************************
 		std::map<std::string, TBE_function> items;
 		TBE_function tbe_filter = nullptr;
-		//*********************************************************
-
+		
 
 	public:
 
 		
-		// @brief Used to install a token filter for a perticular TBE_profile.
-		// @details This function installs a token filter that gets invoked
-		//			for every token. This functionality is similar to that of 
-		//			event filters present in GUI systems.
-		// @note	The event filter being used must tell back the parser whether
-		//			the data must be passed to the actual TBE_function after filtering or not
-		//			through its return value. A value of <strong>true</strong> indicates that 
-		//			the data must be dispatched back to the actual TBE_function
-		// @param	tbe_func A token based execution function
+		/// @brief Used to install a token filter for a perticular TBE_profile.
+		/// @details This function installs a token filter that gets invoked
+		///			for every token. This functionality is similar to that of 
+		///			event filters present in GUI systems.
+		/// @note	The event filter being used must tell back the parser whether
+		///			the data must be passed to the actual TBE_function after filtering or not
+		///			through its return value. A value of <strong>true</strong> indicates that 
+		///			the data must be dispatched back to the actual TBE_function
+		/// @param	tbe_func A token based execution function
 		void installFilter(TBE_function tbe_func) { tbe_filter = tbe_func; }
 
-		// @brief Removes the token_filter from the profile card
+		/// @brief Removes the token_filter from the profile card
 		void removeFilter() { tbe_filter = nullptr; }
 
-		// @brief Checks whether the token_filter is installed in the card or not
-		// @return bool
+		/// @brief Checks whether the token_filter is installed in the card or not
+		/// @return bool
 		bool is_filter_present() { return tbe_filter != nullptr; }
 	
-		// @brief Gets the TBE_function for a specific tag_name
-		// @param tag_name Tag name for which the function needs to be obtained
+		/// @brief Gets the TBE_function for a specific tag_name
+		/// @param tag_name Tag name for which the function needs to be obtained
 		const TBE_function operator[](std::string tag_name);
 
-		// @brief Registers the TBE_function for a specific tag/token
-		// @param token_str Tag/Token name to which a TBE_function needs to be bound/added
-		// @param tbe_func	TBE_function that needs to get bound with <strong>token_str</strong>
-		// @note  If the tag name / token_ name has already been bounded to some other TBE_function
-		//		  this function returns false. In order to bind a new function first unbind the existing
-		//		  function using remove token and then call <strong>registerforToken</strong> with new
-		//		  tbe_function as argument
-		// @return bool
+		/// @brief Registers the TBE_function for a specific tag/token
+		/// @param token_str Tag/Token name to which a TBE_function needs to be bound/added
+		/// @param tbe_func	TBE_function that needs to get bound with <strong>token_str</strong>
+		/// @note  If the tag name / token_ name has already been bounded to some other TBE_function
+		///		  this function returns false. In order to bind a new function first unbind the existing
+		///		  function using remove token and then call <strong>registerforToken</strong> with new
+		///		  tbe_function as argument
+		/// @return bool
 		bool registerforToken(std::string token_str, TBE_function tbe_func);
 
-		// @brief Unbinds the tag name from its respective TBE_function
-		// @param token_str Tag to be Unbound
-		// @return bool
+		/// @brief Unbinds the tag name from its respective TBE_function
+		/// @param token_str Tag to be Unbound
+		/// @return bool
 		bool removeToken(std::string token_str);
 
-		// @brief Returns the TBE_function for a perticular token/tag
-		// @param token_str Tag name for which the TBE_function is to be fetched
-		// @return TBE_function
+		/// @brief Returns the TBE_function for a perticular token/tag
+		/// @param token_str Tag name for which the TBE_function is to be fetched
+		/// @return TBE_function
 		TBE_function getTBE_func(std::string token_str);
 
-		// @brief Executes the TBE_function which is bound to the tag.
-		// @param parser Pointer to the parser instance. Can be used for changing/ controlling the parsing strategy
-		// @param tag	 Tag name for which the respective TBE_function needs to be executed
-		// @param value	 The tag's value which can be either a single string or a collection of attributes for that tag
-		// @param data	 The record data
-		// @return bool
-		// @note  The return value is dependent upon either the token_filter or the TBE_function. If the token filter chooses
-		//		  to not dispatch the data back to its corrosponding TBE_function then <strong>true</strong> is returned. Otherwise
-		//		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
-		//		  the execution went successful or not
+		/// @brief Executes the TBE_function which is bound to the tag.
+		/// @param parser Pointer to the parser instance. Can be used for changing/ controlling the parsing strategy
+		/// @param tag	 Tag name for which the respective TBE_function needs to be executed
+		/// @param value	 The tag's value which can be either a single string or a collection of attributes for that tag
+		/// @param data	 The record data
+		/// @return bool
+		/// @note  The return value is dependent upon either the token_filter or the TBE_function. If the token filter chooses
+		///		  to not dispatch the data back to its corrosponding TBE_function then <strong>true</strong> is returned. Otherwise
+		///		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
+		///		  the execution went successful or not
 		bool exec_func(GDMLParser* parser, std::string& tag, std::variant<std::string,std::map<std::string,std::string>>& value, std::string& data);
 		
 	};
@@ -311,36 +309,36 @@ namespace gml {
 
 	public:
 		
-		// @brief Conversion Operator for Implicitly/Explicitly converting GMLTokenCard into TBE_Profile card
+		/// @brief Conversion Operator for Implicitly/Explicitly converting GMLTokenCard into TBE_Profile card
 		operator TBE_Profile();
 
-		// @brief Ties a function(TBE_function) to a tag
-		// @details Takes the tag name as argument and binds the tag  with the TBE_function 
-		//			and registers the pair in the list of bindings
-		// @param token_name Tag name
-		// @note  Calling tie along will not bind a tag to the function. Rather one has to 
-		//		  chain the tie function with the with function that is present inside TokenFunction
-		//		  Only then the function will get bound with the tag
-		// @return TokenFunction
+		/// @brief Ties a function(TBE_function) to a tag
+		/// @details Takes the tag name as argument and binds the tag  with the TBE_function 
+		///			and registers the pair in the list of bindings
+		/// @param token_name Tag name
+		/// @note  Calling tie along will not bind a tag to the function. Rather one has to 
+		///		  chain the tie function with the with function that is present inside TokenFunction
+		///		  Only then the function will get bound with the tag
+		/// @return TokenFunction
 		TokenFunction tie(const std::string& token_name);
 
-		// @brief Unbinds the tag from its associated TBE_function
-		// @param token_name Tag name from which the associated TBE_function needs to be seperated
+		/// @brief Unbinds the tag from its associated TBE_function
+		/// @param token_name Tag name from which the associated TBE_function needs to be seperated
 		void detachFunctionFrom(std::string& token_name);
 
-		// @brief Gets the TBE_function asssociated with a perticular tag
-		// @param token_name Tag name
-		// @return TBE_function
-		// @note	If no function is bound to a perticular tag name then it returns nullptr
+		/// @brief Gets the TBE_function asssociated with a perticular tag
+		/// @param token_name Tag name
+		/// @return TBE_function
+		/// @note	If no function is bound to a perticular tag name then it returns nullptr
 		auto getFunctionFrom(const std::string& token_name);
 
-		// @brief Installs the tag_filter
-		// @param filterfunction TBE_function that will act as a filter for every tag
-		// @warning This function has the ability to prevent dispatching the data to 
-		//			tags respective TBE_function hence the function must be written carefully
+		/// @brief Installs the tag_filter
+		/// @param filterfunction TBE_function that will act as a filter for every tag
+		/// @warning This function has the ability to prevent dispatching the data to 
+		///			tags respective TBE_function hence the function must be written carefully
 		bool setFilter(TBE_function filterfunction);
 
-		// @brief Removes the tag_filter
+		/// @brief Removes the tag_filter
 		void removeFilter();
 	};
 
@@ -356,33 +354,33 @@ namespace gml {
 		GDML_SYMBOL_PROFILE syntax_profile;
 	public:
 		
-		//@brief Default Constructor of GML Parser
+		///@brief Default Constructor of GML Parser
 		GDMLParser() {}
 		
-		// @brief Constructor for GML Parser used to set an external symbol profile 
-		// @param _syntax_profile Symbol/Syntax Profile card to be used
-		// @see	 GDML_SYMBOL_PROFILE
+		/// @brief Constructor for GML Parser used to set an external symbol profile 
+		/// @param _syntax_profile Symbol/Syntax Profile card to be used
+		/// @see	 GDML_SYMBOL_PROFILE
 		GDMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
 		
-		// @brief Used to explicitly set the Syntax Profile
-		// @param _syntax_profile Symbol/Syntax Profile card to be used
-		// @see	 GDML_SYMBOL_PROFILE
+		/// @brief Used to explicitly set the Syntax Profile
+		/// @param _syntax_profile Symbol/Syntax Profile card to be used
+		/// @see	 GDML_SYMBOL_PROFILE
 		void setSyntaxProfile(GDML_SYMBOL_PROFILE _syntax_profile) { syntax_profile = _syntax_profile; }
 
-		// @brief	Parses and runs the entire GML code 
-		// @param	str GML Code in std::string format
-		// @param	profile GML Token Card that contains all the bindings of tags with their TBE_functions
-		// @return	int
-		// @note	The return value basically indicates a status of success or some error in the form of ERRROR Codes as defined in errorcodes.h.
-		//			It is not advised to pass an object of TBE_Profile directly. Rather prefer to pass an object of GMLTokenCard as an argument
-		//			(conversions take place automatically) containing the tags and their associations with TBE_functions
-		// @see		TBE_profile
+		/// @brief	Parses and runs the entire GML code 
+		/// @param	str GML Code in std::string format
+		/// @param	profile GML Token Card that contains all the bindings of tags with their TBE_functions
+		/// @return	int
+		/// @note	The return value basically indicates a status of success or some error in the form of ERRROR Codes as defined in errorcodes.h.
+		///			It is not advised to pass an object of TBE_Profile directly. Rather prefer to pass an object of GMLTokenCard as an argument
+		///			(conversions take place automatically) containing the tags and their associations with TBE_functions
+		/// @see		TBE_profile
 		int exec(const std::string& str, TBE_Profile profile);
 
 	private:
 
 		std::optional<std::pair<std::string, std::variant<std::string, std::map<std::string, std::string>>>> processSplitToken(const std::string& text);
-		//*********************************************************
+		
 	};
 
 }
