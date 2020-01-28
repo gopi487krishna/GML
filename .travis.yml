@@ -26,7 +26,7 @@ matrix:
         #- libc++abi-9-dev
 
 script:
-  - python3 --version
+  - pip3 install jinja2 Pygments
   - mkdir build
   - cd build
   - cmake ..
