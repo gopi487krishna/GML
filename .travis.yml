@@ -9,8 +9,10 @@ matrix:
         apt:
           packages:
             - libstdc++-9-dev
+            - python3.6
           sources:
             - ubuntu-toolchain-r-test
+            - deadsnakes
       install:
         - sudo apt-get update -qq
         - sudo apt-get install -qq g++-9
@@ -26,11 +28,9 @@ matrix:
         #- libc++abi-9-dev
 
 script:
-  - sudo add-apt-repository ppa:deadsnakes/ppa
-  - sudo apt-get install python3.8
+  - python3 --version
   - sudo apt install python3-pip
   - pip3 install jinja2 Pygments
-  - python3 --version
   - pip3 --version
   - mkdir build
   - cd build
