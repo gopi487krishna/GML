@@ -26,6 +26,7 @@ matrix:
         #- libc++abi-9-dev
 
 script:
+  - python3 --version
   - mkdir build
   - cd build
   - cmake ..
