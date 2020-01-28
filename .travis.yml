@@ -26,7 +26,11 @@ matrix:
         #- libc++abi-9-dev
 
 script:
+  - sudo apt-get install python3.6
+  - sudo apt install python3-pip
   - pip3 install jinja2 Pygments
+  - python3 --version
+  - pip3 --version
   - mkdir build
   - cd build
   - cmake ..
