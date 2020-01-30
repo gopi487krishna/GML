@@ -23,7 +23,7 @@ jobs:
       - run:
           command: 'sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2'
       - run:
-          command: 'export PATH=$PATH:/usr/bin/python3'
+          command: 'pyenv global 3.7.0'
       - run:
           command: 'python3 --version'
       - run:
