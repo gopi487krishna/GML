@@ -38,4 +38,13 @@ jobs:
           command: 'sudo apt-get install -qq g++-9'
       - run:
           command: 'sudo apt-get install -y libboost-test-dev'
-       
+      - run:
+          command: 'mkdir build'
+      - run:
+          command: 'cd build'
+      - run:
+          command: 'cmake ..'
+      - run:
+          command: 'make'
+      - run:
+          command: 'ctest'
