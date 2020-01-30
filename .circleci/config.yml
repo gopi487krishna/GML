@@ -17,6 +17,8 @@ jobs:
       - run:
           command: 'sudo apt install python3.7'
       - run:
+          command: 'python3 -v'
+      - run:
           command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev'
       - run:
           command: 'sudo apt install python3-pip'
