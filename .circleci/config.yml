@@ -43,7 +43,11 @@ jobs:
       - run:
           command: 'mkdir build'
       - run:
+          command: 'ls'
+      - run:
           command: 'cd build'
+       - run:
+          command: 'ls' 
       - run:
           command: 'cmake ..'
       - run:
