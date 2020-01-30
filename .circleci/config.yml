@@ -17,6 +17,8 @@ jobs:
       - run:
           command: 'sudo apt install python3'
       - run:
+          command: 'ls -l /usr/bin/python*'
+      - run:
           command: 'python3 --version'
       - run:
           command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev'
