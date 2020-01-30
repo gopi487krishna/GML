@@ -13,7 +13,7 @@ jobs:
       - run:
           command: 'apt-get update && sudo apt-get install -y cmake'
       - run:
-          command: 'python3 -v
+          command: 'python3 -v'
       - run:
           command: 'pip3 install jinja2 Pygments'  
       - run:
