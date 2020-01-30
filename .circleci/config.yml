@@ -39,6 +39,8 @@ jobs:
       - run:
           command: 'sudo apt-get install -y libboost-test-dev'
       - run:
+          command: 'ls'
+      - run:
           command: 'mkdir build'
       - run:
           command: 'cd build'
