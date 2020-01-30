@@ -11,9 +11,15 @@ jobs:
       - run:
           command: 'sudo apt-get update'
       - run:
+          command: 'sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"'
+      - run:
+          command: 'sudo -E apt-add-repository -y "ppa:deadsnakes/ppa"'  
+      - run:
+          command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev python3.7 python3-pip doxygen'       
+      - run:
           command: 'sudo apt-get install -y cmake'
       - run:
-          command: 'python3 -v'
+          command: 'sudo apt-get install'
       - run:
           command: 'pip3 install jinja2 Pygments'  
       - run:
