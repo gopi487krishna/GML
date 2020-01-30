@@ -46,7 +46,7 @@ jobs:
           command: 'ls'
       - run:
           command: 'cd build'
-       - run:
+      - run:
           command: 'ls' 
       - run:
           command: 'cmake ..'
