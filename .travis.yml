@@ -22,7 +22,6 @@ matrix:
         - sudo apt-get install -y libboost-test-dev
 
     # Build with OS X and clang ( Currently disabled due to some compilation problems with Clang
-    # The default clang compiler supports C++11.
     #- os: osx
      # env: COMPILER=clang++
      # packages:
