@@ -49,4 +49,4 @@ jobs:
       - run:
           command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss || true'
       - run:
-          command: 'cd html && ls -a'
+          command: 'cd html && ls -l'
