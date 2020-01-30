@@ -39,7 +39,7 @@ jobs:
       - run:
           command: 'mkdir build'
       - run:
-          command: 'cd build && cmake ..'
+          command: 'cd build && export CC=gcc-9 && export CXX=g++-9 && export CXX=${CXX:-g++} && export CXX_FOR_BUILD=${CXX_FOR_BUILD:-g++} && export CC=${CC:-gcc} && export CC_FOR_BUILD=${CC_FOR_BUILD:-gcc} && cmake ..'
       - run:
           command: 'cd build && make'
       - run:
