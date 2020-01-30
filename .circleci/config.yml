@@ -17,9 +17,13 @@ jobs:
       - run:
           command: 'sudo apt install python3.7'
       - run:
-          command: 'sudo apt-get install -y cmake'
+          command: 'sudo apt install libstdc++-9dev'
       - run:
-          command: 'sudo apt-get install'
+          command: 'sudo apt install python3-pip'
+      - run:
+          command: 'sudo apt install doxygen'  
+      - run:
+          command: 'sudo apt-get install -y cmake'
       - run:
           command: 'pip3 install jinja2 Pygments'  
       - run:
