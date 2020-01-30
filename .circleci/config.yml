@@ -17,7 +17,7 @@ jobs:
       - run:
           command: 'sudo apt install python3'
       - run:
-          command: 'ls -l /usr/bin/python*'
+          command: 'sudo ln -s /usr/bin/python3.5 /usr/bin/python3'
       - run:
           command: 'python3 --version'
       - run:
