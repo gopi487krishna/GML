@@ -15,11 +15,11 @@ jobs:
       - run:
           command: 'sudo apt update'
       - run:
+          command: 'sudo apt install software-properties-common'
+      - run:
           command: 'sudo apt install python3'
       - run:
-          command: 'sudo ln -s /usr/bin/python3.5 /usr/bin/python3'
-      - run:
-          command: 'python3 --version'
+          command: 'python3.7 --version'
       - run:
           command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev'
       - run:
