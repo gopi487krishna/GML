@@ -7,7 +7,7 @@ jobs:
      machine:
        image: ubuntu-1604:201903-01
      environment:
-       PYTHONPATH: "/usr/bin/python3.7"
+       PYTHONPATH: /usr/bin/python3.7
      steps:
       - checkout
       - run:
