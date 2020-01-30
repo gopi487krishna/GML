@@ -17,11 +17,11 @@ jobs:
       - run:
           command: 'sudo apt install software-properties-common'
       - run:
+          command: 'sudo apt install python3.7'
+      - run:
           command: 'sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1'
       - run:
-          command: 'sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 2'
-      - run:
-          command: 'sudo apt install python3'
+          command: 'sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2'
       - run:
           command: 'python3 --version'
       - run:
