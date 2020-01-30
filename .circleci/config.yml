@@ -29,8 +29,6 @@ jobs:
       - run:
           command: 'sudo apt install doxygen'  
       - run:
-          command: 'sudo apt-get install -y cmake'
-      - run:
           command: 'pip3 install jinja2 Pygments'  
       - run:
           command: 'sudo apt-get update -qq'
@@ -39,18 +37,10 @@ jobs:
       - run:
           command: 'sudo apt-get install -y libboost-test-dev'
       - run:
-          command: 'ls'
-      - run:
           command: 'mkdir build'
       - run:
-          command: 'ls'
+          command: 'cd build && cmake ..'
       - run:
-          command: 'cd build'
+          command: 'cd build && make'
       - run:
-          command: 'ls' 
-      - run:
-          command: 'cmake ..'
-      - run:
-          command: 'make'
-      - run:
-          command: 'ctest'
+          command: 'cd build && ctest'
