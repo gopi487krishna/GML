@@ -1,13 +1,37 @@
+version: 2
 
-version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
-workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run
+
+
+jobs:
+  build:
+    docker:
+      - image: "debian:stretch"
+    environment:
+      CC: gcc-9
+      CXX: g++-9
+    steps:
+      - checkout
+       - run:
+          name: Installing SUDO
+          command: 'apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*'
+      
+      - run:
+          command: 'sudo -E apt-add-repository -y ppa:ubuntu-toolchain-r/test'
+     - run:
+          command: 'sudo -E apt-add-repository -y ppa:deadsnakes/ppa'
+    
+      - run:
+          name: Install CMAKE
+          command: 'apt-get update && sudo apt-get install -y cmake'
+    
+    
+    - run:
+          command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev python3.7 python3-pip doxygen'
+     - run:
+          command: 'pip3 install jinja2 Pygments'  
+    - run:
+          command: 'sudo apt-get update -qq'
+      - run:
+          command: 'sudo apt-get install -qq g++-9'
+      - run:
+          command: 'sudo apt-get install -y libboost-test-dev'
