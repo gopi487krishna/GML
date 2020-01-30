@@ -44,3 +44,9 @@ jobs:
           command: 'cd build && make'
       - run:
           command: 'cd build && ctest'
+      - run:
+          command: 'git clone git://github.com/mosra/m.css'
+      - run:
+          command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss'
+      - run:
+          command: 'ls'
