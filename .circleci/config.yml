@@ -9,8 +9,6 @@ jobs:
      steps:
       - checkout
       - run:
-          command: 'apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*'
-      - run:
           command: 'apt-get update && sudo apt-get install -y cmake'
       - run:
           command: 'python3 -v'
