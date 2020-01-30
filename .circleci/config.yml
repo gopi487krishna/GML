@@ -17,7 +17,7 @@ jobs:
       - run:
           command: 'sudo apt install software-properties-common'
       - run:
-          command: 'sudo apt install python3.7.5'
+          command: 'sudo apt install python3.7'
       - run:
           command: 'pyenv global 3.7.5'
       - run:
