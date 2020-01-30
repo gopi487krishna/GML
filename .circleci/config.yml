@@ -19,7 +19,7 @@ jobs:
       - run:
           command: 'sudo apt install python3.7'
       - run:
-          command: 'pyenv global 3.7.5'
+          command: 'pyenv global 3.7.0'
       - run:
           command: 'python3 --version'
       - run:
@@ -47,6 +47,6 @@ jobs:
       - run:
           command: 'git clone git://github.com/mosra/m.css'
       - run:
-          command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss'
+          command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss || true'
       - run:
-          command: 'ls'
+          command: 'cd html && ls -a'
