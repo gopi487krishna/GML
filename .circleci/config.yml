@@ -16,7 +16,7 @@ jobs:
           command: 'sudo apt update'
       - run:
           command: 'sudo apt install software-properties-common'
-     - run:
+      - run:
           command: 'sudo bash -c "yes | add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y python3.6"'
       - run:
           command: 'python3 --version'
