@@ -1,0 +1,52 @@
+version: 2
+
+
+
+jobs:
+  build:
+     machine:
+       image: ubuntu-1604:201903-01 
+     steps:
+      - checkout
+      - run:
+          command: 'sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"'
+      - run:
+          command: 'sudo -E apt-add-repository -y "ppa:deadsnakes/ppa"'  
+      - run:
+          command: 'sudo apt update'
+      - run:
+          command: 'sudo apt install software-properties-common'
+      - run:
+          command: 'sudo apt install python3.7'
+      - run:
+          command: 'pyenv global 3.7.0'
+      - run:
+          command: 'python3 --version'
+      - run:
+          command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev'
+      - run:
+          command: 'sudo apt install python3-pip'
+      - run:
+          command: 'sudo apt install doxygen'  
+      - run:
+          command: 'pip3 install jinja2 Pygments'  
+      - run:
+          command: 'sudo apt-get update -qq'
+      - run:
+          command: 'sudo apt-get install -qq g++-9'
+      - run:
+          command: 'sudo apt-get install -y libboost-test-dev'
+      - run:
+          command: 'mkdir build'
+      - run:
+          command: 'cd build && export CC=gcc-9 && export CXX=g++-9 && export CXX=${CXX:-g++} && export CXX_FOR_BUILD=${CXX_FOR_BUILD:-g++} && export CC=${CC:-gcc} && export CC_FOR_BUILD=${CC_FOR_BUILD:-gcc} && cmake ..'
+      - run:
+          command: 'cd build && make'
+      - run:
+          command: 'cd build && ctest'
+      - run:
+          command: 'git clone git://github.com/mosra/m.css'
+      - run:
+          command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss || true'
+      - run:
+          command: 'cd html && ls -l'
