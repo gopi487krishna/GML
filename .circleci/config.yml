@@ -10,26 +10,26 @@ jobs:
       - checkout
       - run:
           command: 'sudo -E apt-add-repository -y "ppa:ubuntu-toolchain-r/test"'
-      - run:
-          command: 'sudo -E apt-add-repository -y "ppa:deadsnakes/ppa"'  
+      #- run:
+       #   command: 'sudo -E apt-add-repository -y "ppa:deadsnakes/ppa"'  
       - run:
           command: 'sudo apt update'
       - run:
           command: 'sudo apt install software-properties-common'
-      - run:
-          command: 'sudo apt install python3.7'
-      - run:
-          command: 'pyenv global 3.7.0'
-      - run:
-          command: 'python3 --version'
+      #- run:
+       #   command: 'sudo apt install python3.7'
+     # - run:
+      #    command: 'pyenv global 3.7.0'
+      #- run:
+       #   command: 'python3 --version'
       - run:
           command: 'sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libstdc++-9-dev'
-      - run:
-          command: 'sudo apt install python3-pip'
-      - run:
-          command: 'sudo apt install doxygen'  
-      - run:
-          command: 'pip3 install jinja2 Pygments'  
+      #- run:
+       #   command: 'sudo apt install python3-pip'
+      #- run:
+       #   command: 'sudo apt install doxygen'  
+      #- run:
+      #    command: 'pip3 install jinja2 Pygments'  
       - run:
           command: 'sudo apt-get update -qq'
       - run:
@@ -44,9 +44,9 @@ jobs:
           command: 'cd build && make'
       - run:
           command: 'cd build && ctest'
-      - run:
-          command: 'git clone git://github.com/mosra/m.css'
-      - run:
-          command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss || true'
-      - run:
-          command: 'cd html && ls -l'
+      #- run:
+      #    command: 'git clone git://github.com/mosra/m.css'
+      #- run:
+      #    command: 'cd m.css/documentation && ./doxygen.py /home/circleci/project/Doxyfile-mcss || true'
+      #- run:
+      #    command: 'cd html && ls -l'
