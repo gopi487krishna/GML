@@ -4,7 +4,7 @@
 
 //GDML Parser
 
-std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text)
+std::optional<std::pair<std::string,TagValue_T>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
 	auto tag_value_pair = gml::ParsingTools::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
 	if (!tag_value_pair.has_value())
@@ -197,7 +197,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, std::variant<std::string,std::map<std::string,std::string>>&value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, TagValue_T&value, std::string& data)
 {
 	// If there is some token_filter then execute it
 	if (is_filter_present())

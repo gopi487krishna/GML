@@ -23,8 +23,8 @@
 namespace gml {
 
 	class GDMLParser;
-	using TBE_function = std::function<bool(GDMLParser * parser, std::string, std::variant<std::string,std::map<std::string,std::string>>, std::string)>;
-
+	using TagValue_T = std::variant<std::string, std::map<std::string, std::string>>;
+	using TBE_function = std::function<bool(GDMLParser * parser, std::string, TagValue_T, std::string)>;
 
 
 
@@ -280,7 +280,7 @@ namespace gml {
 		///		  to not dispatch the data back to its corrosponding TBE_function then <strong>true</strong> is returned. Otherwise
 		///		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
 		///		  the execution went successful or not
-		bool exec_func(GDMLParser* parser, std::string& tag, std::variant<std::string,std::map<std::string,std::string>>& value, std::string& data);
+		bool exec_func(GDMLParser* parser, std::string& tag, TagValue_T& value, std::string& data);
 		
 	};
 
