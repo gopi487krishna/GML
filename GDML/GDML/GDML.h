@@ -36,7 +36,7 @@ namespace gml {
 				have any dependency with the main Interpreter class, I advise users not to use them for any other purpose as 
 				the details may change with time
 	*/
-	class ParsingApi {
+	class ParsingTools {
 
 	public:
 

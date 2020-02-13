@@ -6,7 +6,7 @@
 
 std::optional<std::pair<std::string,std::variant<std::string,std::map<std::string,std::string>>>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
-	auto tag_value_pair = gml::ParsingApi::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
+	auto tag_value_pair = gml::ParsingTools::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
 	if (!tag_value_pair.has_value())
 	{
 		return std::nullopt;
@@ -25,11 +25,11 @@ std::optional<std::pair<std::string,std::variant<std::string,std::map<std::strin
 			}
 			
 			std::string parse_string(tag_value_pair->second.begin()+1, attribute_list_close_pos);
-			auto attributelist = gml::ParsingApi::splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
+			auto attributelist = gml::ParsingTools::splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
 			std::map<std::string, std::string> my_map;
 			for (auto& tag : attributelist){
 					
-				auto x = gml::ParsingApi::splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
+				auto x = gml::ParsingTools::splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
 				my_map[x->first] = x->second;
 					
 
@@ -101,17 +101,17 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 		std::string CTAG_attribtext(CTAG_openbrace + 1, CTAG_closebrace);
 
 		//***********************
-		gml::ParsingApi::trim(OTAG_attribtext);
-		gml::ParsingApi::trim(CTAG_attribtext);
+		gml::ParsingTools::trim(OTAG_attribtext);
+		gml::ParsingTools::trim(CTAG_attribtext);
 		//***********************
 
 		//Check whether the tags are properly closed and then dispatch them
-		if (gml::ParsingApi::isClosed(CTAG_attribtext,syntax_profile.getClosingCharacter()) || gml::ParsingApi::isClosed(OTAG_attribtext, CTAG_attribtext,syntax_profile.getClosingCharacter(),syntax_profile.getTagValueSeperator()))
+		if (gml::ParsingTools::isClosed(CTAG_attribtext,syntax_profile.getClosingCharacter()) || gml::ParsingTools::isClosed(OTAG_attribtext, CTAG_attribtext,syntax_profile.getClosingCharacter(),syntax_profile.getTagValueSeperator()))
 		{
 
 			
 			std::string inner_text(OTAG_closebrace + 1 , CTAG_openbrace );
-			auto tags = gml::ParsingApi::splitIntoTokens(OTAG_attribtext, syntax_profile.getTagSeperator());
+			auto tags = gml::ParsingTools::splitIntoTokens(OTAG_attribtext, syntax_profile.getTagSeperator());
 			if (tags.empty())
 			{
 				return NO_TAGS_FOUND;

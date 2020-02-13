@@ -2,13 +2,13 @@
 #include "pch.h"
 #include "GDML.h"
 
-const std::string& gml::ParsingApi::trim(std::string& tag_text, char trimchar)
+const std::string& gml::ParsingTools::trim(std::string& tag_text, char trimchar)
 {
 	auto it = std::remove(tag_text.begin(), tag_text.end(), trimchar);
 	tag_text.erase(it, tag_text.end());
 	return tag_text;
 }
-std::vector<std::string> gml::ParsingApi::splitIntoTokens(const std::string& tag_text, const char seperator)
+std::vector<std::string> gml::ParsingTools::splitIntoTokens(const std::string& tag_text, const char seperator)
 {
 
 	std::vector<std::string> tag_collection;
@@ -34,7 +34,7 @@ std::vector<std::string> gml::ParsingApi::splitIntoTokens(const std::string& tag
 	}
 	return tag_collection;
 }
-std::optional<std::pair<std::string, std::string>> gml::ParsingApi::splitIntoToken(const std::string& text, const char seperator, const std::vector<char>forbidden_list)
+std::optional<std::pair<std::string, std::string>> gml::ParsingTools::splitIntoToken(const std::string& text, const char seperator, const std::vector<char>forbidden_list)
 {
 
 	auto textbeg = text.begin();
@@ -86,7 +86,7 @@ std::optional<std::pair<std::string, std::string>> gml::ParsingApi::splitIntoTok
 	}
 
 }
-bool gml::ParsingApi::isClosed(const std::string& s1, const std::string& s2,char closing_character, char seperation_character)
+bool gml::ParsingTools::isClosed(const std::string& s1, const std::string& s2,char closing_character, char seperation_character)
 {
 
 
@@ -97,7 +97,7 @@ bool gml::ParsingApi::isClosed(const std::string& s1, const std::string& s2,char
 	return std::equal(split_tag_value->first.begin(), split_tag_value->first.end(), s2.begin() + 1, s2.end());
 }
 
-bool gml::ParsingApi::isClosed(std::string& str, char closing_character)
+bool gml::ParsingTools::isClosed(std::string& str, char closing_character)
 {
 
 	
