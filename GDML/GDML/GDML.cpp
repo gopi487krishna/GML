@@ -4,7 +4,7 @@
 
 //GDML Parser
 
-std::optional<std::pair<std::string,TagValue_T>> gml::GDMLParser::processSplitToken(const std::string& text)
+std::optional<std::pair<std::string,gml::TagValue_T>> gml::GDMLParser::processSplitToken(const std::string& text)
 {
 	auto tag_value_pair = gml::ParsingTools::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
 	if (!tag_value_pair.has_value())
@@ -53,94 +53,52 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 
 	while (strbeg != strend)
 	{
-		auto OTAG_openbrace = std::find(strbeg, strend, syntax_profile.getOpenTag());
-
-		//Error/SpecialCase
-		if (OTAG_openbrace == strend)
-		{
-			//Normal Text which means the entire program is made of just comments
-			return NO_CODE_ONLY_COMMENT;
-		}
-
-		//Comment Text: strbeg------OTAG_openbrace
-
-		auto OTAG_closebrace = std::find(OTAG_openbrace, strend, syntax_profile.getCloseTag());
-
-		//Error/SpecialCase
-		if (OTAG_closebrace == strend)
-		{
+	
 		
-			return BRACE_MISMATCH_ERROR;
-		}
+		auto gml_record = ParsingTools::fetchRawRecord(strbeg, strend, syntax_profile);
 
-		//Here we obtain the tag information inside the [] brackets
-		std::string OTAG_attribtext(OTAG_openbrace + 1, OTAG_closebrace);
-
-		//--------------------------------------------------------------------------------------------------------------------------
-
-		auto CTAG_openbrace = std::find(OTAG_closebrace + 1 , strend, syntax_profile.getOpenTag());
-
-
-
-		//Error/SpecialCase
-		if (CTAG_openbrace == strend)
+		
+		// If the next record could be fetched/parsed from the input stream
+		if (gml_record.second == true)
 		{
-			return BRACE_MISMATCH_ERROR;
+
+
+			auto tags = gml::ParsingTools::splitIntoTokens(gml_record.first.open_tag_token_stream, syntax_profile.getTagSeperator());
 			
-		} //Error/SpecialCase
-
-
-		auto CTAG_closebrace = std::find(CTAG_openbrace, strend, syntax_profile.getCloseTag());
-
-		//Error/SpecialCase
-		if (CTAG_closebrace == strend)
-		{
-			return BRACE_MISMATCH_ERROR;
-		}
-
-		std::string CTAG_attribtext(CTAG_openbrace + 1, CTAG_closebrace);
-
-		//***********************
-		gml::ParsingTools::trim(OTAG_attribtext);
-		gml::ParsingTools::trim(CTAG_attribtext);
-		//***********************
-
-		//Check whether the tags are properly closed and then dispatch them
-		if (gml::ParsingTools::isClosed(CTAG_attribtext,syntax_profile.getClosingCharacter()) || gml::ParsingTools::isClosed(OTAG_attribtext, CTAG_attribtext,syntax_profile.getClosingCharacter(),syntax_profile.getTagValueSeperator()))
-		{
-
-			
-			std::string inner_text(OTAG_closebrace + 1 , CTAG_openbrace );
-			auto tags = gml::ParsingTools::splitIntoTokens(OTAG_attribtext, syntax_profile.getTagSeperator());
 			if (tags.empty())
 			{
 				return NO_TAGS_FOUND;
 			}
 
-			
+
 			//This loop basically recurses through all the tags that enclose the inner text
 			for (auto& tag : tags)
 			{
 				auto tag_value_pair = processSplitToken(tag);
-							
+
 				if (!tag_value_pair)
 				{
 
 					return NO_TAGS_FOUND;
 				}
 
-				auto state=profile.exec_func(this,tag_value_pair->first, tag_value_pair->second, inner_text);
-				
-				
-			}
-			
+				// TODO : Find a use for how to utilize state
+				profile.exec_func(this, tag_value_pair->first, tag_value_pair->second, gml_record.first.inner_data);
 
-			strbeg = CTAG_closebrace + 1;
+
+			}
+
+			strbeg = gml_record.first.record_end_position + 1;
+
+
+
+
 		}
-		else
-		{
+		else {
 			return TAG_NOT_CLOSED;
 		}
+
+		
 
 
 	}
@@ -197,7 +155,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, TagValue_T&value, std::string& data)
+bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, gml::TagValue_T&value, std::string& data)
 {
 	// If there is some token_filter then execute it
 	if (is_filter_present())

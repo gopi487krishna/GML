@@ -27,6 +27,20 @@ namespace gml {
 	using TBE_function = std::function<bool(GDMLParser * parser, std::string, TagValue_T, std::string)>;
 
 
+	class GDML_SYMBOL_PROFILE;
+
+	struct RawRecord {
+
+		std::string::const_iterator record_end_position;
+		std::string open_tag_token_stream="";
+		std::string close_tag_token_stream="";
+		std::string inner_data;
+
+	};
+
+
+
+
 
 	/**
 	 * @brief	Defines a small parsing API for token parsing
@@ -86,6 +100,11 @@ namespace gml {
 		/// @return     bool
 		static bool isClosed(std::string& str, char closing_character);
 
+	
+	
+		static std::pair<RawRecord,bool> fetchRawRecord( std::string::const_iterator stream_pos, const std::string::const_iterator end_pos,const GDML_SYMBOL_PROFILE& syntax_profile);
+	
+	
 	};
 
 
@@ -143,7 +162,7 @@ namespace gml {
 
 		/// @brief  Gets the closing character that delimits the scope of a tag list
 		/// @return char
-		char getClosingCharacter();
+		char getClosingCharacter() const;
 
 		/// @brief  Sets the attribute seperator for seperating attributes in an attribute list
 		/// @param _attribute_seperator ASCII character for attribute_seperator symbol
@@ -152,7 +171,7 @@ namespace gml {
 
 		/// @brief Gets the attribute_seperator for seperating attributes in an attribute list
 		/// @return char
-		char getAttributeSeperator();
+		char getAttributeSeperator() const ;
 
 		/// @brief Sets the open_attribute symbol for starting an attribute list for a tag
 		/// @param open_attribute ASCII character for open_attribute symbol
@@ -160,7 +179,7 @@ namespace gml {
 
 		/// @brief Get the open_attribute symbol that starts an attribute list for a tag
 		/// @return char
-		char getAttributeListOpen();
+		char getAttributeListOpen() const;
 
 		/// @brief Sets the close_attribute symbol that closes an attribute list for a tag
 		/// @param close_attribute ASCII character for close_attribute symbol
@@ -168,7 +187,7 @@ namespace gml {
 
 		/// @brief Gets the close_attribute symbol that closes an attribute list for a tag
 		/// @return char
-		char getAttributeListClose();
+		char getAttributeListClose() const;
 
 		/// @brief  Sets the tag_seperator that seperates different tags from each other in a record
 		/// @param _tag_seperator ASCII character for seperating tags
@@ -176,7 +195,7 @@ namespace gml {
 
 		/// @brief  Gets the tag_seperator symbol that seperates different tags from each other in a record
 		/// @return char
-		char getTagSeperator();
+		char getTagSeperator() const;
 
 		/// @brief  Sets the tag_value seperator symbol for splitting a tag into tag_value pairs 
 		/// @param  _tag_value_seperator ASCII character for splitting into tag_value pairs
@@ -184,7 +203,7 @@ namespace gml {
 
 		/// @brief  Gets the tag_value seperator symbol that splits a tag into tag_value pair
 		/// @return char
-		char getTagValueSeperator();
+		char getTagValueSeperator()const;
 
 		/// @brief  Sets the open_tag symbol that starts the tag list
 		/// @param  opentag_character ASCII character for starting a tag list
@@ -192,7 +211,7 @@ namespace gml {
 
 		/// @brief	Gets the open_tag symbol used to start the tag list 
 		/// @return char
-		char getOpenTag();
+		char getOpenTag() const;
 
 		/// @brief  Sets the closetag symbol used to end the tag list
 		/// @param	closetag_character ASCII character for ending a tag list
@@ -200,7 +219,7 @@ namespace gml {
 
 		/// @brief  Gets the closetag symbol used to end the tag list
 		/// @return char
-		char getCloseTag();
+		char getCloseTag() const;
 
 
 	};
@@ -280,7 +299,7 @@ namespace gml {
 		///		  to not dispatch the data back to its corrosponding TBE_function then <strong>true</strong> is returned. Otherwise
 		///		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
 		///		  the execution went successful or not
-		bool exec_func(GDMLParser* parser, std::string& tag, TagValue_T& value, std::string& data);
+		bool exec_func(GDMLParser* parser, std::string& tag, gml::TagValue_T& value, std::string& data);
 		
 	};
 
@@ -360,7 +379,7 @@ namespace gml {
 		/// @brief Constructor for GML Parser used to set an external symbol profile 
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
 		/// @see	 GDML_SYMBOL_PROFILE
-		GDMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
+		explicit GDMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
 		
 		/// @brief Used to explicitly set the Syntax Profile
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
@@ -379,7 +398,7 @@ namespace gml {
 
 	private:
 
-		std::optional<std::pair<std::string, std::variant<std::string, std::map<std::string, std::string>>>> processSplitToken(const std::string& text);
+		std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken(const std::string& text);
 		
 	};
 
