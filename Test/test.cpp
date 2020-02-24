@@ -5,7 +5,7 @@
 BOOST_AUTO_TEST_CASE(basic_parser_test){
 
     std::string test_output_string="";
-    auto basic_test_func=[&](gml::GDMLParser*parser,std::string tag,std::variant<std::string,std::map<std::string,std::string>> value, std::string data){
+    auto basic_test_func=[&](gml::GMLParser*parser,std::string tag,std::variant<std::string,std::map<std::string,std::string>> value, std::string data){
         test_output_string=data;
         return true;};
     
