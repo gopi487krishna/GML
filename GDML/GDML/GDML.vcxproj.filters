@@ -38,8 +38,5 @@
     <ClCompile Include="GMLParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gdml_symbol_profile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

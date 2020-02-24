@@ -160,7 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GDML.cpp" />
-    <ClCompile Include="gdml_symbol_profile.cpp" />
     <ClCompile Include="GMLParser.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

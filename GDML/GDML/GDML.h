@@ -22,9 +22,9 @@
 */
 namespace gml {
 
-	class GDMLParser;
+	class GMLParser;
 	using TagValue_T = std::variant<std::string, std::map<std::string, std::string>>;
-	using TBE_function = std::function<bool(GDMLParser * parser, std::string, TagValue_T, std::string)>;
+	using TBE_function = std::function<bool(GMLParser * parser, std::string, TagValue_T, std::string)>;
 
 
 	class GDML_SYMBOL_PROFILE;
@@ -104,6 +104,9 @@ namespace gml {
 	
 		static std::pair<RawRecord,bool> fetchRawRecord( std::string::const_iterator stream_pos, const std::string::const_iterator end_pos,const GDML_SYMBOL_PROFILE& syntax_profile);
 	
+		static std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken(const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile);
+
+
 	
 	};
 
@@ -132,94 +135,74 @@ namespace gml {
 
 
 	public:
-		GDML_SYMBOL_PROFILE();
+		GDML_SYMBOL_PROFILE() {}
 
-		/// @brief Construct Syntax Card object with the following parameters.
-		/// @param _tag_seperator			Symbol for seperating tags
-		/// @param _tag_value_seperator	    Symbol for seperating tags into  tag:value pair
-		/// @param _tag_open				Symbol for starting tag list
-		/// @param _tag_close			    Symbol for closing tags list
-		/// @param _closing_character		Symbol for delimiting the scope of  tag list
-		/// @param _attribute_open			Symbol for starting an attribute list of a tag
-		/// @param _attribute_seperator		Symbol for seperating attributes in an attribute list
-		/// @param _attribute_close			Symbol for ending an attribute list of a tag
-		GDML_SYMBOL_PROFILE(
-			const  char _tag_seperator,
-			const  char _tag_value_seperator,
-			const  char _tag_open,
-			const  char _tag_close,
-			const  char _closing_character,
-			const  char _attribute_open,
-			const  char _attribute_seperator,
-			const  char _attribute_close
-
-		);
-
+		
 
 		/// @brief  Sets the closing character that delimits the scope of a tag list
 		/// @param _closing_character ASCII character for closing_symbol
-		void setClosingCharacter(char _closing_character);
+		void setClosingCharacter(char _closing_character) { closing_character = _closing_character; }
 
 		/// @brief  Gets the closing character that delimits the scope of a tag list
 		/// @return char
-		char getClosingCharacter() const;
+		char getClosingCharacter() const { return  closing_character; }
 
 		/// @brief  Sets the attribute seperator for seperating attributes in an attribute list
 		/// @param _attribute_seperator ASCII character for attribute_seperator symbol
-		void setAttributeSeperator(char _attribute_seperator);
+		void setAttributeSeperator(char _attribute_seperator) { attribute_seperator = _attribute_seperator; }
 
 
 		/// @brief Gets the attribute_seperator for seperating attributes in an attribute list
 		/// @return char
-		char getAttributeSeperator() const ;
+		char getAttributeSeperator() const { return attribute_seperator; }
 
 		/// @brief Sets the open_attribute symbol for starting an attribute list for a tag
 		/// @param open_attribute ASCII character for open_attribute symbol
-		void setAttributelistOpen(char open_attribute);
+		void setAttributelistOpen(char open_attribute) { attribute_open = open_attribute; }
 
 		/// @brief Get the open_attribute symbol that starts an attribute list for a tag
 		/// @return char
-		char getAttributeListOpen() const;
+		char getAttributeListOpen() const { return attribute_open; }
 
 		/// @brief Sets the close_attribute symbol that closes an attribute list for a tag
 		/// @param close_attribute ASCII character for close_attribute symbol
-		void setAttributeListClose(char close_attribute);
+		void setAttributeListClose(char close_attribute) { attribute_close = close_attribute; }
 
 		/// @brief Gets the close_attribute symbol that closes an attribute list for a tag
 		/// @return char
-		char getAttributeListClose() const;
+		char getAttributeListClose() const { return attribute_close; }
 
 		/// @brief  Sets the tag_seperator that seperates different tags from each other in a record
 		/// @param _tag_seperator ASCII character for seperating tags
-		void setTagSeperator(char _tag_seperator);
+		void setTagSeperator(char _tag_seperator) { tag_seperator = _tag_seperator; }
 
 		/// @brief  Gets the tag_seperator symbol that seperates different tags from each other in a record
 		/// @return char
-		char getTagSeperator() const;
+		char getTagSeperator() const { return tag_seperator; }
 
 		/// @brief  Sets the tag_value seperator symbol for splitting a tag into tag_value pairs 
 		/// @param  _tag_value_seperator ASCII character for splitting into tag_value pairs
-		void setTagValueSeperator(char _tag_value_seperator);
+		void setTagValueSeperator(char _tag_value_seperator) { tag_value_seperator = _tag_value_seperator; }
 
 		/// @brief  Gets the tag_value seperator symbol that splits a tag into tag_value pair
 		/// @return char
-		char getTagValueSeperator()const;
+		char getTagValueSeperator()const { return tag_value_seperator; }
 
 		/// @brief  Sets the open_tag symbol that starts the tag list
 		/// @param  opentag_character ASCII character for starting a tag list
-		void setOpenTag(char opentag_character);
+		void setOpenTag(char opentag_character) { tag_open = opentag_character; }
 
 		/// @brief	Gets the open_tag symbol used to start the tag list 
 		/// @return char
-		char getOpenTag() const;
+		char getOpenTag() const { return tag_open; }
 
 		/// @brief  Sets the closetag symbol used to end the tag list
 		/// @param	closetag_character ASCII character for ending a tag list
-		void setCloseTag(char closetag_character);
+		void setCloseTag(char closetag_character) { tag_close = closetag_character; }
 
 		/// @brief  Gets the closetag symbol used to end the tag list
 		/// @return char
-		char getCloseTag() const;
+		char getCloseTag() const { return tag_close; }
 
 
 	};
@@ -267,7 +250,7 @@ namespace gml {
 	
 		/// @brief Gets the TBE_function for a specific tag_name
 		/// @param tag_name Tag name for which the function needs to be obtained
-		const TBE_function operator[](std::string tag_name);
+		const TBE_function operator[](const std::string& tag_name);
 
 		/// @brief Registers the TBE_function for a specific tag/token
 		/// @param token_str Tag/Token name to which a TBE_function needs to be bound/added
@@ -277,17 +260,17 @@ namespace gml {
 		///		  function using remove token and then call <strong>registerforToken</strong> with new
 		///		  tbe_function as argument
 		/// @return bool
-		bool registerforToken(std::string token_str, TBE_function tbe_func);
+		bool registerforToken(const std::string& token_str, TBE_function tbe_func);
 
 		/// @brief Unbinds the tag name from its respective TBE_function
 		/// @param token_str Tag to be Unbound
 		/// @return bool
-		bool removeToken(std::string token_str);
+		bool removeToken(const std::string& token_str);
 
 		/// @brief Returns the TBE_function for a perticular token/tag
 		/// @param token_str Tag name for which the TBE_function is to be fetched
 		/// @return TBE_function
-		TBE_function getTBE_func(std::string token_str);
+		TBE_function getTBE_func(const std::string& token_str);
 
 		/// @brief Executes the TBE_function which is bound to the tag.
 		/// @param parser Pointer to the parser instance. Can be used for changing/ controlling the parsing strategy
@@ -299,7 +282,7 @@ namespace gml {
 		///		  to not dispatch the data back to its corrosponding TBE_function then <strong>true</strong> is returned. Otherwise
 		///		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
 		///		  the execution went successful or not
-		bool exec_func(GDMLParser* parser, std::string& tag, gml::TagValue_T& value, std::string& data);
+		bool exec_func(GMLParser* parser, std::string& tag, gml::TagValue_T& value, std::string& data);
 		
 	};
 
@@ -366,7 +349,7 @@ namespace gml {
 	 * @brief The main parser class for parsing and running GML code.
 	 * @author Gopi Krishna Menon
 	*/
-	class GDMLParser
+	class GMLParser
 	{
 		// Make constructors explicit
 
@@ -374,12 +357,12 @@ namespace gml {
 	public:
 		
 		///@brief Default Constructor of GML Parser
-		GDMLParser() {}
+		GMLParser() {}
 		
 		/// @brief Constructor for GML Parser used to set an external symbol profile 
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
 		/// @see	 GDML_SYMBOL_PROFILE
-		explicit GDMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
+		explicit GMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
 		
 		/// @brief Used to explicitly set the Syntax Profile
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
@@ -398,7 +381,7 @@ namespace gml {
 
 	private:
 
-		std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken(const std::string& text);
+		//std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken( const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile);
 		
 	};
 

@@ -1,51 +1,12 @@
 #include "pch.h"
 #include "GDML.h"
 #include "error_codes.h"
-
+#include <algorithm>
 //GDML Parser
 
-std::optional<std::pair<std::string,gml::TagValue_T>> gml::GDMLParser::processSplitToken(const std::string& text)
-{
-	auto tag_value_pair = gml::ParsingTools::splitIntoToken(text, syntax_profile.getTagValueSeperator(), {syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose()});
-	if (!tag_value_pair.has_value())
-	{
-		return std::nullopt;
-	}
-
-	if (*tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen())	
-	{
-
-			auto attribute_list_close_pos = std::find(tag_value_pair->second.begin(), tag_value_pair->second.end(),syntax_profile.getAttributeListClose());
-			
-			//Covers the case if along with attribute list some other text was also specified like [print:{color:blue} This is not allowed] Hello [/]
-			if (attribute_list_close_pos == tag_value_pair->second.end() || attribute_list_close_pos!= tag_value_pair->second.end()-1)
-			{
-				return std::nullopt;
-
-			}
-			
-			std::string parse_string(tag_value_pair->second.begin()+1, attribute_list_close_pos);
-			auto attributelist = gml::ParsingTools::splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
-			std::map<std::string, std::string> my_map;
-			for (auto& tag : attributelist){
-					
-				auto x = gml::ParsingTools::splitIntoToken(tag,syntax_profile.getTagValueSeperator(),{});
-				my_map[x->first] = x->second;
-					
-
-			}
-
-			return std::make_pair(tag_value_pair->first, std::move(my_map));		
-	}
-	else{
-			return std::make_pair(tag_value_pair->first, tag_value_pair->second);
-		}
-}
 
 
-
-
-int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
+int gml::GMLParser::exec(const std::string& str,TBE_Profile profile)
 {
 
 	auto strbeg = str.begin();
@@ -71,10 +32,27 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 			}
 
 
+			
+			/*std::vector<std::optional<std::pair<std::string, TagValue_T>>> processed_tags;
+			processed_tags.reserve(tags.size());*/
+
+		
+			// Convert tags into tag_value pairs and store them.
+			//std::transform(tags.begin(), tags.end(), processed_tags.begin(), [&]( std::string tag) { return std::move(gml::ParsingTools::processSplitToken(tag,syntax_profile)); });
+
+			/*for (auto& tag : tags) {
+			
+			
+				processed_tags.push_back(gml::ParsingTools::processSplitToken(tag, syntax_profile));
+			
+			
+			}*/
+
+
 			//This loop basically recurses through all the tags that enclose the inner text
-			for (auto& tag : tags)
+			for (auto& tag : tags )
 			{
-				auto tag_value_pair = processSplitToken(tag);
+				auto tag_value_pair = gml::ParsingTools::processSplitToken(tag,syntax_profile);
 
 				if (!tag_value_pair)
 				{
@@ -107,7 +85,7 @@ int gml::GDMLParser::exec(const std::string& str,TBE_Profile profile)
 
 
 
-const gml::TBE_function gml::TBE_Profile::operator[](std::string tag_name)
+const gml::TBE_function gml::TBE_Profile::operator[](const std::string& tag_name)
 {
 	try
 	{
@@ -123,7 +101,7 @@ const gml::TBE_function gml::TBE_Profile::operator[](std::string tag_name)
 }
 
 //TBE_Profile
-bool gml::TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_func)
+bool gml::TBE_Profile::registerforToken(const std::string& token_str, TBE_function tbe_func)
 {
 	auto key_loc = items.find(token_str);
 	if (key_loc != items.end())
@@ -136,11 +114,11 @@ bool gml::TBE_Profile::registerforToken(std::string token_str, TBE_function tbe_
 		return true;
 	}
 }
-bool gml::TBE_Profile::removeToken(std::string token_str)
+bool gml::TBE_Profile::removeToken(const std::string& token_str)
 {
 	return items.erase(token_str);
 }
-gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
+gml::TBE_function gml::TBE_Profile::getTBE_func(const std::string& token_str)
 {
 	TBE_function func;
 	try
@@ -155,7 +133,7 @@ gml::TBE_function gml::TBE_Profile::getTBE_func(std::string token_str)
 	return func;
 
 }
-bool gml::TBE_Profile::exec_func(GDMLParser* parser, std::string& tag, gml::TagValue_T&value, std::string& data)
+bool gml::TBE_Profile::exec_func(GMLParser* parser, std::string& tag, gml::TagValue_T&value, std::string& data)
 {
 	// If there is some token_filter then execute it
 	if (is_filter_present())

@@ -111,83 +111,103 @@ std::pair<gml::RawRecord, bool> gml::ParsingTools::fetchRawRecord(std::string::c
 	RawRecord gml_record;
 
 	// Gets the OpenBrace and CloseBrace position from the token_stream
-	auto getBraceOpenandClosePos = [&syntax_profile](std::string::const_iterator stream_start, std::string::const_iterator stream_end){
+	auto getBraceOpenandClosePos = [&syntax_profile](std::string::const_iterator stream_start, std::string::const_iterator stream_end) {
 
 
 		auto open_brace_pos = std::find(stream_start, stream_end, syntax_profile.getOpenTag());
-
-		// Open brace not found syntax error
-		if (open_brace_pos == stream_end)
-		{
-			return std::make_pair( stream_end,stream_end );
+		if (!(open_brace_pos == stream_end)) {
+			auto close_brace_pos = std::find(open_brace_pos, stream_end, syntax_profile.getCloseTag());
+			if (!(close_brace_pos == stream_end)) {
+				return std::make_pair(open_brace_pos, close_brace_pos);
+			}
 		}
 
-		auto close_brace_pos = std::find(open_brace_pos, stream_end, syntax_profile.getCloseTag());
+		return std::make_pair(stream_end, stream_end);
 
-		// Close brace not found syntax error
-		if (close_brace_pos == stream_end)
-		{
-			return std::make_pair( stream_end,stream_end);
-		}
-
-
-
-		return std::make_pair( open_brace_pos,close_brace_pos);
 
 	};
 
 	auto OTAG_brace_positions = getBraceOpenandClosePos(stream_pos, end_pos);
 
-	if (OTAG_brace_positions.first == end_pos || OTAG_brace_positions.second == end_pos) {
+	if (!(OTAG_brace_positions.first == end_pos || OTAG_brace_positions.second == end_pos)) {
 
-		// Syntax Error
-		return { RawRecord(),false };
+
+		// All the tokens inside [] are obtained
+		gml_record.open_tag_token_stream = std::string(OTAG_brace_positions.first + 1, OTAG_brace_positions.second);
+		trim(gml_record.open_tag_token_stream);
+
+		//***********************************
+		// Part for closing tag
+		//***********************************
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		auto CTAG_brace_positions = getBraceOpenandClosePos(OTAG_brace_positions.second + 1, end_pos);
+
+		if (!(CTAG_brace_positions.first == end_pos || CTAG_brace_positions.second == end_pos)) {
+
+			// All the tokens inside [/] are obtained
+			gml_record.close_tag_token_stream = std::string(CTAG_brace_positions.first + 1, CTAG_brace_positions.second);
+			trim(gml_record.close_tag_token_stream);
+
+
+			if (gml::ParsingTools::isClosed(
+				gml_record.close_tag_token_stream,
+				syntax_profile.getClosingCharacter()
+			) ||
+				gml::ParsingTools::isClosed(
+					gml_record.open_tag_token_stream, gml_record.close_tag_token_stream,
+					syntax_profile.getClosingCharacter(),
+					syntax_profile.getTagValueSeperator()
+				)
+				) {
+
+				gml_record.inner_data = std::string(OTAG_brace_positions.second + 1, CTAG_brace_positions.first);
+				gml_record.record_end_position = CTAG_brace_positions.second;
+				return { gml_record,true };
+			}
+
+		}
+
 
 	}
 
-	// All the tokens inside [] are obtained
-	gml_record.open_tag_token_stream = std::string(OTAG_brace_positions.first + 1, OTAG_brace_positions.second);
-	trim(gml_record.open_tag_token_stream);
+	return { RawRecord(),false };
 
-	//***********************************
-	// Part for closing tag
-	//***********************************
+}
 
-	//--------------------------------------------------------------------------------------------------------------------------
+std::optional<std::pair<std::string, gml::TagValue_T>> gml::ParsingTools::processSplitToken(const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile)
+{
+	auto tag_value_pair = splitIntoToken(text, syntax_profile.getTagValueSeperator(), { syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose() });
+	if (tag_value_pair.has_value())
+	{
+		if (*tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen()) {
+
+			auto attribute_list_close_pos = std::find(tag_value_pair->second.begin(), tag_value_pair->second.end(), syntax_profile.getAttributeListClose());
+
+			//Covers the case if along with attribute list some other text was also specified like [print:{color:blue} This is not allowed] Hello [/]
+			if (!(attribute_list_close_pos == tag_value_pair->second.end() || attribute_list_close_pos != tag_value_pair->second.end() - 1)) {
+				std::string parse_string(tag_value_pair->second.begin() + 1, attribute_list_close_pos);
+				auto attributelist = splitIntoTokens(parse_string, syntax_profile.getAttributeSeperator());
+				std::map<std::string, std::string> my_map;
+				for (auto& tag : attributelist) {
+
+					auto x = splitIntoToken(tag, syntax_profile.getTagValueSeperator(), {});
+					my_map[x->first] = x->second;
 
 
-	auto CTAG_brace_positions = getBraceOpenandClosePos(OTAG_brace_positions.second + 1, end_pos);
+				}
 
-	if (CTAG_brace_positions.first == end_pos || CTAG_brace_positions.second == end_pos) {
+				return std::make_pair(tag_value_pair->first, std::move(my_map));
 
-		// Syntax Error
-		return { RawRecord(),false };
+			}
+			return std::nullopt;
+
+
+		}
+		return std::make_pair(tag_value_pair->first, tag_value_pair->second);
 
 	}
-
-	// All the tokens inside [/] are obtained
-	gml_record.close_tag_token_stream = std::string(CTAG_brace_positions.first + 1, CTAG_brace_positions.second);
-	trim(gml_record.close_tag_token_stream);
-
-
-	if (gml::ParsingTools::isClosed(
-		gml_record.close_tag_token_stream,
-		syntax_profile.getClosingCharacter()
-	) ||
-		gml::ParsingTools::isClosed(
-			gml_record.open_tag_token_stream, gml_record.close_tag_token_stream,
-			syntax_profile.getClosingCharacter(),
-			syntax_profile.getTagValueSeperator()
-		)
-		) {
-
-		gml_record.inner_data = std::string( OTAG_brace_positions.second+1, CTAG_brace_positions.first);
-		gml_record.record_end_position = CTAG_brace_positions.second;
-	}
-	else {
-		return { RawRecord(),false };
-	}
-
-	return { gml_record,true };
+	
+	return std::nullopt;
 
 }
