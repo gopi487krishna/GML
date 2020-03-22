@@ -16,6 +16,7 @@ int gml::GMLParser::exec(const std::string& str,TBE_Profile profile)
 	{
 	
 		
+		
 		auto gml_record = ParsingTools::fetchRawRecord(strbeg, strend, syntax_profile);
 
 		
@@ -30,6 +31,7 @@ int gml::GMLParser::exec(const std::string& str,TBE_Profile profile)
 			{
 				return NO_TAGS_FOUND;
 			}
+
 
 
 			
@@ -49,36 +51,31 @@ int gml::GMLParser::exec(const std::string& str,TBE_Profile profile)
 			}*/
 
 
-			//This loop basically recurses through all the tags that enclose the inner text
-			for (auto& tag : tags )
-			{
-				auto tag_value_pair = gml::ParsingTools::processSplitToken(tag,syntax_profile);
+			// Contains tags in the form of tag_value_pairs
+			std::vector<std::optional<std::pair<std::string,TagValue_T>>>  processed_tags;
 
-				if (!tag_value_pair)
-				{
-
+			for (auto& tag : tags) {
+			
+				if (auto tag_value_pair = gml::ParsingTools::processSplitToken(tag, syntax_profile); tag_value_pair.has_value()) {
+					processed_tags.push_back(tag_value_pair);				
+				}
+				else {
+				
 					return NO_TAGS_FOUND;
 				}
-
-				// TODO : Find a use for how to utilize state
-				profile.exec_func(this, tag_value_pair->first, tag_value_pair->second, gml_record.first.inner_data);
-
-
 			}
-
+			
+			
+			for (auto tag_value_pair : processed_tags) {
+				profile.exec_func(this, tag_value_pair->first, tag_value_pair->second, gml_record.first.inner_data);		
+			}
+			tag_collection.push_back(processed_tags);
 			strbeg = gml_record.first.record_end_position + 1;
-
-
-
 
 		}
 		else {
 			return TAG_NOT_CLOSED;
 		}
-
-		
-
-
 	}
 
 }

@@ -379,8 +379,11 @@ namespace gml {
 		/// @see		TBE_profile
 		int exec(const std::string& str, TBE_Profile profile);
 
-	private:
+		std::vector < std::vector < std::optional<std::pair<std::string, TagValue_T>>>> getTagCollection() { return tag_collection; }
 
+	private:
+		std::pair<bool, std::string> parse_schedule_info{ false,"" };
+		std::vector < std::vector < std::optional<std::pair<std::string, TagValue_T>>>> tag_collection;
 		//std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken( const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile);
 		
 	};
