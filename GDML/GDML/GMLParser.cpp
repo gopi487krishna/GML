@@ -180,7 +180,7 @@ std::optional<std::pair<std::string, gml::TagValue_T>> gml::ParsingTools::proces
 	auto tag_value_pair = splitIntoToken(text, syntax_profile.getTagValueSeperator(), { syntax_profile.getAttributeListOpen(),syntax_profile.getAttributeListClose() });
 	if (tag_value_pair.has_value())
 	{
-		if (*tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen()) {
+		if ((!tag_value_pair->second.empty()) && *tag_value_pair->second.begin() == syntax_profile.getAttributeListOpen()) {
 
 			auto attribute_list_close_pos = std::find(tag_value_pair->second.begin(), tag_value_pair->second.end(), syntax_profile.getAttributeListClose());
 

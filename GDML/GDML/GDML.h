@@ -25,19 +25,76 @@ namespace gml {
 	class GMLParser;
 	using TagValue_T = std::variant<std::string, std::map<std::string, std::string>>;
 	using TBE_function = std::function<bool(GMLParser * parser, std::string, TagValue_T, std::string)>;
+	using Tag = std::pair<std::string, TagValue_T>;
+	using Tag_Collection = std::vector<Tag>;
 
+
+	struct Record {
+
+		std::string     record_label;
+		Tag_Collection  tags;
+		std::string     inner_data;
+	};
 
 	class GDML_SYMBOL_PROFILE;
 
 	struct RawRecord {
 
 		std::string::const_iterator record_end_position;
-		std::string open_tag_token_stream="";
-		std::string close_tag_token_stream="";
+		std::string open_tag_token_stream = "";
+		std::string close_tag_token_stream = "";
 		std::string inner_data;
 
 	};
 
+	class Schedule {
+
+
+		bool status = false;
+		size_t  current_location = 0;
+		std::vector<Record>record_collection;
+
+	public:
+
+		bool isScheduled() { return status; }
+		bool isValid() { return current_location < record_collection.size() - 1 ? true : false; }
+		bool stop_scheduling() {
+
+			if (!record_collection.empty()&& current_location != record_collection.size() - 1) {
+
+				current_location += 1;
+				return false;
+			}
+			return !(status = false);
+		}
+
+		bool setLocation(size_t new_location) {
+
+			if (new_location <= record_collection.size() - 1) {
+				current_location = new_location;
+				return true;
+			}
+
+			return false;
+		}
+
+		auto getLocation() { return current_location; }
+
+		bool schedule(const std::string& record_label) {
+
+			auto iter = std::find_if(record_collection.begin(), record_collection.end(), [=](const Record& record) {return record.record_label == record_label; });
+			if (iter != record_collection.end()) {
+
+				current_location = std::distance(record_collection.begin(), iter);
+				return status = true;
+			}
+			return false;
+		}
+
+		auto& getRecordCollection() { return record_collection; }
+
+
+	};
 
 
 
@@ -47,7 +104,7 @@ namespace gml {
 	 * @details	This class contains a small set of static functions that assist the main interpreter for parsing and validating GML code
 	 * @author	Gopi Krishna Menon
 	 * @note	This class is not intended to be used directly by the Users of GML. Although the functions in the API do not
-				have any dependency with the main Interpreter class, I advise users not to use them for any other purpose as 
+				have any dependency with the main Interpreter class, I advise users not to use them for any other purpose as
 				the details may change with time
 	*/
 	class ParsingTools {
@@ -60,8 +117,8 @@ namespace gml {
 		/// @param	 trimchar Unwanted character that needs to be removed from <strong> tag_text </strong>
 		/// @return  const String&
 		static const std::string& trim(std::string& tag_text, char trimchar = ' ');
-	
-		
+
+
 		/// @brief		Splits a token stream into a collection of Tags
 		/// @details	Takes a token stream and stores the tokens into a vector by spltting them on the basis of seperator
 		/// @param		tag_text  Token Stream
@@ -79,7 +136,7 @@ namespace gml {
 		///				make sure that certain blacklisted characters/symbols do not appear before seperator ( so that the interpreter does not parse the code incorrectly )
 
 		static std::optional<std::pair<std::string, std::string>>splitIntoToken(const std::string& text, const char seperator, std::vector<char> forbidden_list);
-		
+
 		/// @brief		Checks whether the GML record was closed
 		/// @details	Checks whether the GML record was closed. But this function instead of checking only for closing character
 		///				also looks out for whether the record was closed by the first tag of the record.
@@ -91,8 +148,8 @@ namespace gml {
 		/// @return     bool
 
 		static bool isClosed(const std::string& s1, const std::string& s2, char closing_character, char seperation_character);
-		
-		
+
+
 		/// @brief		Checks whether the GML record was closed
 		/// @details	Checks whether the GML record was closed using the closing_character
 		/// @param		str  String to be checked whether record is closed properly or not
@@ -100,14 +157,14 @@ namespace gml {
 		/// @return     bool
 		static bool isClosed(std::string& str, char closing_character);
 
-	
-	
-		static std::pair<RawRecord,bool> fetchRawRecord( std::string::const_iterator stream_pos, const std::string::const_iterator end_pos,const GDML_SYMBOL_PROFILE& syntax_profile);
-	
+
+
+		static std::pair<RawRecord, bool> fetchRawRecord(std::string::const_iterator stream_pos, const std::string::const_iterator end_pos, const GDML_SYMBOL_PROFILE& syntax_profile);
+
 		static std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken(const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile);
 
 
-	
+
 	};
 
 
@@ -137,7 +194,7 @@ namespace gml {
 	public:
 		GDML_SYMBOL_PROFILE() {}
 
-		
+
 
 		/// @brief  Sets the closing character that delimits the scope of a tag list
 		/// @param _closing_character ASCII character for closing_symbol
@@ -216,8 +273,8 @@ namespace gml {
 				get invoked when token is encountered
 	 * @author Gopi Krishna Menon
 	 * @warning Users are advised never to use this class directly for creating token_cards.
-	 *			In future this class will get deprecated and its functionality will be replaced completely 
-	 *			with the GMLTokenCard API.	
+	 *			In future this class will get deprecated and its functionality will be replaced completely
+	 *			with the GMLTokenCard API.
 	 * @see		GMLTokenCard
 	*/
 	class TBE_Profile
@@ -225,11 +282,11 @@ namespace gml {
 
 		std::map<std::string, TBE_function> items;
 		TBE_function tbe_filter = nullptr;
-		
+
 
 	public:
 
-		
+
 		/// @brief Used to install a token filter for a perticular TBE_profile.
 		/// @details This function installs a token filter that gets invoked
 		///			for every token. This functionality is similar to that of 
@@ -247,7 +304,7 @@ namespace gml {
 		/// @brief Checks whether the token_filter is installed in the card or not
 		/// @return bool
 		bool is_filter_present() { return tbe_filter != nullptr; }
-	
+
 		/// @brief Gets the TBE_function for a specific tag_name
 		/// @param tag_name Tag name for which the function needs to be obtained
 		const TBE_function operator[](const std::string& tag_name);
@@ -283,7 +340,7 @@ namespace gml {
 		///		  if the tag is not bound to anyone then a value of false is returned. In simple terms this function tells whether
 		///		  the execution went successful or not
 		bool exec_func(GMLParser* parser, std::string& tag, gml::TagValue_T& value, std::string& data);
-		
+
 	};
 
 
@@ -310,7 +367,7 @@ namespace gml {
 		};
 
 	public:
-		
+
 		/// @brief Conversion Operator for Implicitly/Explicitly converting GMLTokenCard into TBE_Profile card
 		operator TBE_Profile();
 
@@ -345,6 +402,26 @@ namespace gml {
 	};
 
 
+	//struct Schedule {
+	//	bool status{ false };
+	//	std::string jmp_loc_identifier{""};
+	//	std::vector< std::vector < std::optional<std::pair<std::string, TagValue_T>>>::iterator > next;
+	//	auto isScheduled() { return status; }
+	//	auto getJmpLocIden() { return jmp_loc_identifier; }
+	//	void setJmpLocIden(const std::string& jmplociden) { jmp_loc_identifier = jmplociden; }
+	//	auto getNext() { return next; }
+	//	auto setNext(std::vector< std::vector < std::optional<std::pair<std::string, TagValue_T>>>::iterator > iter) { next = iter; }
+	//	static auto getSchedule(){
+	//		static Schedule my_schedule;
+	//		return my_schedule;
+	//	}
+	//private:
+	//	Schedule() {}
+	//};
+
+
+
+
 	/**
 	 * @brief The main parser class for parsing and running GML code.
 	 * @author Gopi Krishna Menon
@@ -355,15 +432,15 @@ namespace gml {
 
 		GDML_SYMBOL_PROFILE syntax_profile;
 	public:
-		
+
 		///@brief Default Constructor of GML Parser
 		GMLParser() {}
-		
+
 		/// @brief Constructor for GML Parser used to set an external symbol profile 
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
 		/// @see	 GDML_SYMBOL_PROFILE
 		explicit GMLParser(GDML_SYMBOL_PROFILE _syntax_profile) :syntax_profile(_syntax_profile) {}
-		
+
 		/// @brief Used to explicitly set the Syntax Profile
 		/// @param _syntax_profile Symbol/Syntax Profile card to be used
 		/// @see	 GDML_SYMBOL_PROFILE
@@ -379,13 +456,8 @@ namespace gml {
 		/// @see		TBE_profile
 		int exec(const std::string& str, TBE_Profile profile);
 
-		std::vector < std::vector < std::optional<std::pair<std::string, TagValue_T>>>> getTagCollection() { return tag_collection; }
 
-	private:
-		std::pair<bool, std::string> parse_schedule_info{ false,"" };
-		std::vector < std::vector < std::optional<std::pair<std::string, TagValue_T>>>> tag_collection;
-		//std::optional<std::pair<std::string, gml::TagValue_T>> processSplitToken( const std::string& text, const GDML_SYMBOL_PROFILE& syntax_profile);
-		
+		Schedule parser_schedule;
 	};
 
 }
