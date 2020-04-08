@@ -90,7 +90,10 @@ namespace gml {
 			}
 			return false;
 		}
-
+		
+		bool record_present_in_cache(const std::string& record_label) {
+			std::find_if(record_collection.begin(), record_collection.end(), [=](const Record& record) {return record.record_label == record_label; }) != record_collection.end();
+		}
 		auto& getRecordCollection() { return record_collection; }
 
 
@@ -431,6 +434,7 @@ namespace gml {
 		// Make constructors explicit
 
 		GDML_SYMBOL_PROFILE syntax_profile;
+		Record current_record;
 	public:
 
 		///@brief Default Constructor of GML Parser
@@ -455,6 +459,8 @@ namespace gml {
 		///			(conversions take place automatically) containing the tags and their associations with TBE_functions
 		/// @see		TBE_profile
 		int exec(const std::string& str, TBE_Profile profile);
+
+		auto getCurrentRecord() { return current_record; }
 
 
 		Schedule parser_schedule;

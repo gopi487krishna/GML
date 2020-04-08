@@ -15,7 +15,7 @@ int gml::GMLParser::exec(const std::string& str, TBE_Profile profile)
 	while (strbeg != strend)
 	{
 
-		Record current_record;
+		
 
 		if (parser_schedule.isScheduled() && parser_schedule.isValid()) {
 
