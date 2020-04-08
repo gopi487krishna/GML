@@ -57,7 +57,7 @@ namespace gml {
 	public:
 
 		bool isScheduled() { return status; }
-		bool isValid() { return current_location < record_collection.size() - 1 ? true : false; }
+		bool isValid() { return current_location <= record_collection.size() - 1 ? true : false; }
 		bool stop_scheduling() {
 
 			if (!record_collection.empty()&& current_location != record_collection.size() - 1) {
