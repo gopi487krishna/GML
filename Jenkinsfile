@@ -33,7 +33,7 @@ pipeline {
         always {
             // Archive the CTest xml output
             archiveArtifacts(
-                artifacts: 'build/Testing/**/*.xml'
+                artifacts: 'build/Testing/**/*.xml',
                 fingerprint: true
             )
             // Process the CTest xml out with XUnit Plugin
