@@ -35,7 +35,7 @@ pipeline {
     }
     post {
         always {
-            // Archive the CTest xml output
+            
             archiveArtifacts(
                 artifacts: 'build/Testing/**/*.xml',
                 fingerprint: true
