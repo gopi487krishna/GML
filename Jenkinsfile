@@ -28,7 +28,7 @@ pipeline {
                 sh 'git clone git://github.com/mosra/m.css'
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
-                sh 'rsync -a -delete html/ gml-docs/html'
+                sh 'rsync -a -delete html/ gml-docs'
                 withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      dir('gml-docs'){
                      sh ("echo Starting to Publish")
