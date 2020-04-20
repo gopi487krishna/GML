@@ -12,7 +12,7 @@
 /**
  * @file GDML.h
  * @author Gopi Krishna Menon
- * @details Contains all the declarations of GML Classes
+ * @details Contains the main declarations of GML Classes
 */
 
 
