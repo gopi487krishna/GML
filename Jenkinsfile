@@ -29,7 +29,7 @@ pipeline {
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs/'
-                sh 'cd gml-docs && git config --global --list'
+                sh 'cd gml-docs && git status'
             }
         }
     }
