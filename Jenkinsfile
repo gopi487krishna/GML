@@ -29,18 +29,15 @@ pipeline {
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs/'
-                
-            }
-        }
-        stage('Publish'){
-            steps{
-                dir('gml-docs'){
-                     withCredentials([usernamePassword(credentialsID:'3122',passwordVariable:'GIT_PASSWORD',usernameVariable:'GIT_USERNAME')]){
-                        sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@gml-docs --all") 
-                     }
+                withCredentials([usernamePassword(credentialsId: 'git-pass-credentials-ID', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                     sh ("echo Starting to Publish")
+                     sh("git tag -a some_tag -m 'Jenkins'")
+                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@gml-docs --tags')
                 }
             }
         }
+       
+        
     }
     post {
         always {
