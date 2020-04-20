@@ -29,6 +29,13 @@ pipeline {
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs'
+                 withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                     dir('gml-docs'){
+                     sh ("git add .")
+                     sh ("git commit -m 'Updated Documentation' ")
+                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     }
+                 }
             }
 
         }    
@@ -44,17 +51,8 @@ pipeline {
             // Process the CTest xml out with XUnit Plugin
             xunit([CTest(deleteOutputFiles: true, failIfNotNew: true, pattern: 'build/Testing/**/*.xml', skipNoTestFiles: false, stopProcessingIfError: true)])
             deleteDir()
-        }
-        success {
-                
-                withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                     dir('gml-docs'){
-                     sh ("git add .")
-                     sh ("git commit -m 'Updated Documentation' ")
-                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
-                     }
-                }
-            }
+        
+         }
 
         }
     }
