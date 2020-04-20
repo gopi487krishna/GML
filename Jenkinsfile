@@ -31,8 +31,9 @@ pipeline {
                 sh 'rsync -a -delete html/ gml-docs/'
                 withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      sh ("echo Starting to Publish")
-                     sh("git tag -a some_tag -m 'Jenkins'")
-                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --tags')
+                     sh ("git add .")
+                     sh ("git commit -m 'Updated Documentation' ")
+                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
                 }
             }
         }
