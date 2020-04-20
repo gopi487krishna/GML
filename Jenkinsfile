@@ -33,7 +33,7 @@ pipeline {
                      sh ("echo Starting to Publish")
                      sh ("git add .")
                      sh ("git commit -m 'Updated Documentation' ")
-                     //sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
                 }
             }
         }
