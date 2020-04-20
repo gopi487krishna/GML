@@ -25,7 +25,8 @@ pipeline {
         }
         stage('Deploy'){
             steps {
-                sh 'echo Deploying....'
+                sh 'git clone git://github.com/mosra/m.css'
+                sh './m.css/documentation/doxygen.py Doxyfile-mcss'
             }
         }
     }
