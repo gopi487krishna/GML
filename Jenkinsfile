@@ -26,7 +26,7 @@ pipeline {
         stage('Deploy'){
             steps {
                 sh 'git clone git://github.com/mosra/m.css'
-                sh 'git clone git://github.com/gml-docs'
+                sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs/'
                 sh 'cd gml-docs && ls'
