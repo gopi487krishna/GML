@@ -36,9 +36,7 @@ pipeline {
             steps{
                 dir('gml-docs'){
                      withCredentials([usernamePassword(credentialsID:'3122',passwordVariable:'GIT_PASSWORD',usernameVariable:'GIT_USERNAME')]){
-                        sh("git add .")
-                        sh("git commit -m 'Updating DOCS'")
-                        sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@gml-docs") 
+                        sh("git push https://${GIT_USERNAME}:${GIT_PASSWORD}@gml-docs --all") 
                      }
                 }
             }
