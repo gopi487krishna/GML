@@ -27,6 +27,7 @@ pipeline {
             steps {
                 sh 'git clone git://github.com/mosra/m.css'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
+                sh 'ls'
             }
         }
     }
