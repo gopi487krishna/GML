@@ -28,12 +28,12 @@ pipeline {
                 sh 'git clone git://github.com/mosra/m.css'
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
-                sh 'rsync -a -delete html/ gml-docs/'
+                sh 'rsync -a  html/ gml-docs/html'
                 withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      sh ("echo Starting to Publish")
                      sh ("git add .")
                      sh ("git commit -m 'Updated Documentation' ")
-                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     //sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
                 }
             }
         }
