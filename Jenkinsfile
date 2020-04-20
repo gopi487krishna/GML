@@ -29,7 +29,7 @@ pipeline {
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs/'
-                sh 'cd gml-docs && git add . && git config user.name "gopi487krishna" && git commit -m "Updated Documentation" && git remote rm origin && git remote add origin git@github.com:gopi487krishna/gml-docs.git && git push origin master'
+                sh 'cd gml-docs && git add . && git config user.name "gopi487krishna" && git config user.email "krishnagopi487.github@outlook.com" && git commit -m "Updated Documentation" && git remote rm origin && git remote add origin git@github.com:gopi487krishna/gml-docs.git && git push origin master'
             }
         }
     }
