@@ -34,8 +34,8 @@ pipeline {
                      sh ("git add .")
                      script{
                      def REPO_STATUS = 1 //sh(script:"git commit -m 'Updated Documentation'",returnStdout:true)
-                     }
                      sh ('echo "${REPO_STATUS}"')
+                     }
                      //when{expression{REPO_STATUS ==true}}
                      //steps{
                      //sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
