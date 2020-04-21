@@ -36,7 +36,7 @@ pipeline {
                          REPO_STATUS = sh (
                          script: "git commit -m 'Updated Documentation' ",
                          returnStatus:true
-                         )!=1
+                         )!=0
                      
                      when{expression{REPO_STATUS ==true}}
                      steps{
