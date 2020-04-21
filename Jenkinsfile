@@ -36,13 +36,13 @@ pipeline {
                          REPO_STATUS = sh (
                          script: "git commit -m 'Updated Documentation' ",
                          returnStatus:true
-                         )!=0
-                     }
+                         )!=1
+                     
                      when{expression{REPO_STATUS ==true}}
                      steps{
                      sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
                      }
-                     
+                     }
                      }
                  }
             }
