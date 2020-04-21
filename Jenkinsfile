@@ -29,17 +29,15 @@ pipeline {
                 sh 'git clone git://github.com/gopi487krishna/gml-docs'
                 sh './m.css/documentation/doxygen.py Doxyfile-mcss'
                 sh 'rsync -a -delete html/ gml-docs/docs'
-                 withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      dir('gml-docs'){
                      sh ("git add .")
                      script{
                      def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
-                     if(REPO_STATUS==1){ sh('echo "Test Successful"')}
+                     if(REPO_STATUS==0){
+                          sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                          }
                      }
-                     //when{expression{REPO_STATUS ==true}}
-                     //steps{
-                     //sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
-                     //}
                      }
                      
                  }
