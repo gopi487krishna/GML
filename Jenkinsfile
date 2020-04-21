@@ -39,12 +39,12 @@ pipeline {
                          )!=0
                      }
                      sh ('echo ${REPO_STATUS}')
-                     when{expression{REPO_STATUS ==true}}
-                     steps{
-                     sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     //when{expression{REPO_STATUS ==true}}
+                     //steps{
+                     //sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     //}
                      }
-                     }
-                     }
+                     
                  }
             }
 
