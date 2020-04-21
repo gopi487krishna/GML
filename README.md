@@ -1,4 +1,1 @@
-# Generalized-Markup-Language  [![CircleCI](https://circleci.com/gh/gopi487krishna/GML/tree/refactoring.svg?style=svg&circle-token=0fb8620b226bb0d50ed5cb809599c47a5331319b)](https://circleci.com/gh/gopi487krishna/GML/tree/refactoring)
-=======
-# Generalized-Markup-Language  [![CircleCI](https://circleci.com/gh/gopi487krishna/GML/tree/master.svg?style=svg&circle-token=0fb8620b226bb0d50ed5cb809599c47a5331319b)](https://circleci.com/gh/gopi487krishna/GML/tree/master)
-
+# Generalized-Markup-Language [![Build Status](http://34.68.27.8:8080/buildStatus/icon?style=flat-square&&job=GML%2Fmaster)](http://34.68.27.8:8080/job/GML/job/master/)
