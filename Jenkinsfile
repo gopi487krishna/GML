@@ -32,11 +32,8 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      dir('gml-docs'){
                      sh ("git add .")
-                     script {
-                         REPO_STATUS = sh (
-                         script: "git commit -m 'Updated Documentation' ",
-                         returnStatus:true
-                         )
+                     script{
+                     def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
                      }
                      sh ('echo ${REPO_STATUS}')
                      //when{expression{REPO_STATUS ==true}}
