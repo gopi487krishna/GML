@@ -34,7 +34,7 @@ pipeline {
                      sh ("git add .")
                      script{
                      def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
-                     if(REPO_STATUS==0){ sh('echo "Test Successful"')}
+                     if(REPO_STATUS==1){ sh('echo "Test Successful"')}
                      }
                      //when{expression{REPO_STATUS ==true}}
                      //steps{
