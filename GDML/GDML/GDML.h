@@ -17,7 +17,7 @@
 
 
 /**
- * @brief This namespace contains all the declaration of GML Classes.
+ * @brief This namespace contains all the declaration of GML Classes
  * @author Gopi Krishna Menon
 */
 namespace gml {
