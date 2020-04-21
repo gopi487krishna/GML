@@ -32,8 +32,17 @@ pipeline {
                  withCredentials([usernamePassword(credentialsId: '3122', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                      dir('gml-docs'){
                      sh ("git add .")
-                     sh ("git commit -m 'Updated Documentation' ")
+                     script {
+                         REPO_STATUS = sh (
+                         script: "git commit -m 'Updated Documentation' ",
+                         returnStatus:true
+                         )!=1
+                     }
+                     when{expression{REPO_STATUS ==true}}
+                     steps{
                      sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
+                     }
+                     
                      }
                  }
             }
