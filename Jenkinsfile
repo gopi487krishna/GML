@@ -33,8 +33,8 @@ pipeline {
                      dir('gml-docs'){
                      sh ("git add .")
                      script{
-                     def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
-                     if(REPO_STATUS==0){
+                     def CHANGES_MADE = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
+                     if(CHANGES_MADE==0){
                           sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/gml-docs --all')
                           }
                      }
