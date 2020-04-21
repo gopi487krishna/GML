@@ -11,7 +11,7 @@
 
 /**
  * @file GDML.h
- * @author Gopi Krishna Menon
+ * @author Gopi Krishna Menon ( A.K.A Cosmo Ferrito )
  * @details Contains the main declarations of GML Classes
 */
 
