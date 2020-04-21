@@ -33,7 +33,7 @@ pipeline {
                      dir('gml-docs'){
                      sh ("git add .")
                      script{
-                     def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStatus:true)
+                     def REPO_STATUS = sh(script:"git commit -m 'Updated Documentation'",returnStdout:true)
                      }
                      sh ('echo ${REPO_STATUS}')
                      //when{expression{REPO_STATUS ==true}}
