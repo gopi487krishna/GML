@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "GDML.h"
 #include "error_codes.h"
 #include <algorithm>
