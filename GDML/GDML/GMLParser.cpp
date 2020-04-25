@@ -1,5 +1,3 @@
-
-#include "pch.h"
 #include "GDML.h"
 
 const std::string& gml::ParsingTools::trim(std::string& tag_text, char trimchar)
