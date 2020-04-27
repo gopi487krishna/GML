@@ -10,13 +10,15 @@ include_directories(include)
 #Add Boost Unit Test Library
 set(Boost_USE_STATIC_LIBS on)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-include_directories(${BOOST_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIR})
 
 #Add Compiler Flags
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     add_definitions(-std=c++1z -stdlib=libc++ -O3 -Wall)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_definitions(-std=c++17 -O3 -Wall)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    add_definitions(/std:c++17)
 endif()
 
 #Create Executable
