@@ -19,4 +19,6 @@ ipch/
 #Visual Studio User Based
 .vs/
 
-#...
+#cmake
+out/
+CMakeSettings.json
