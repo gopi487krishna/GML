@@ -1,4 +1,5 @@
 #include "GDML.h"
+#include "GMLParser.h"
 #include "error_codes.h"
 #include <algorithm>
 //GDML Parser
