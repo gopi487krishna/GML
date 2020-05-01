@@ -1,5 +1,4 @@
-#include "GDML.h"
-
+#include "GMLParser.h"
 const std::string& gml::ParsingTools::trim(std::string& tag_text, char trimchar)
 {
 	auto it = std::remove(tag_text.begin(), tag_text.end(), trimchar);
