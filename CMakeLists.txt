@@ -21,10 +21,12 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_definitions(/std:c++17)
 endif()
 
+# Generate GML Static Library
+add_library(gml ${include} ${src})
 #Create Executable
-add_executable(exe ${src} ${test} ${include})
-target_link_libraries(exe ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+add_executable(gml_tests ${test} ${include})
+target_link_libraries(gml_tests gml ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
 #Add Support for Unit Test
 enable_testing()
-add_test(myTest exe)
+add_test(gml_feature_tests gml_tests)
